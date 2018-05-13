@@ -1,6 +1,6 @@
-# webpack-typescript-base
+# pixi-demo
 
-A basic Webpack + TypeScript base for building other projects.
+Getting started repo for the basics of [Pixi](http://www.pixijs.com/).
 
 ## Prerequisites
 
