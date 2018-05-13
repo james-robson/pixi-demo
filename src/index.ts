@@ -1,11 +1,8 @@
-import * as _ from 'lodash';
+import * as PIXI from 'pixi.js';
 
-function component(): Element {
-  const element = document.createElement('div');
-
-  element.innerHTML = _.join(['Hello', 'world'], ' ');
-
-  return element;
+function createPixiCanvas(): HTMLCanvasElement {
+  const canvas = new PIXI.Application({ width: 640, height: 360 });
+  return canvas.view;
 }
 
-document.body.appendChild(component());
+document.body.appendChild(createPixiCanvas());
