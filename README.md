@@ -24,5 +24,11 @@ The dev server should be running on port `8080`.
 
 ## TODO
 
-* Add Jest + `npm run test` command
-* Configure prod build
+* Make some 'paddle' and 'ball' shapes/assets
+* Assets can be moved with keys
+* Ball with basic random path
+* Collision detection?
+* Contact area for scoring
+* Start of play
+* Score display
+
