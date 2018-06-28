@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { Application } from 'pixi.js';
+import { Application, Container, Graphics } from 'pixi.js';
 import './main.css';
 
 let app: Application;
@@ -22,12 +22,9 @@ function createPixiApp(): PIXI.Application {
 }
 
 function addGraphicsToApp(appToUpdate: PIXI.Application): void {
-    const circle = new PIXI.Graphics();
-    circle.beginFill(0x5cafe2);
-    circle.drawCircle(0, 0, 80);
-    circle.x = window.innerWidth / 2;
-    circle.y = window.innerHeight / 2;
-    appToUpdate.stage.addChild(circle);
+    const paddle = drawPaddle();
+    drawCenterLine(appToUpdate.stage);
+    appToUpdate.stage.addChild(paddle);
 }
 
 function bootstrap(): void {
@@ -37,4 +34,37 @@ function bootstrap(): void {
     document.body.appendChild(view);
 
     addGraphicsToApp(app);
+}
+
+function drawPaddle(): Graphics {
+    const paddle = new PIXI.Graphics();
+    paddle.beginFill(0xffffff);
+    paddle.drawRect(0, 0, 30, 150);
+    paddle.x = window.innerWidth / 3;
+    paddle.y = window.innerHeight / 3;
+    return paddle;
+}
+
+function drawCenterLine(stage: Container): void {
+    let lineLength = 0;
+    let fill = true;
+
+    while (lineLength < window.innerHeight) {
+        const centerLine = new PIXI.Graphics();
+        const dashLength = 100;
+        // Move it to the beginning of the line
+        centerLine.position.set(window.innerWidth / 2, lineLength);
+
+        // Draw the line (endPoint should be relative to myGraph's position)
+        const colour = fill ? 0xffffff : 0x000000;
+
+        centerLine.lineStyle(20, colour)
+            .moveTo(0, 0)
+            .lineTo(0, dashLength);
+
+        lineLength += dashLength;
+        fill = !fill;
+        console.log(`filling. lineLength: ${lineLength}, lineTo: ${dashLength}, colour: ${colour}`);
+        stage.addChild(centerLine);
+    }
 }
