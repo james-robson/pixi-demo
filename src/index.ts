@@ -1,8 +1,9 @@
 import * as PIXI from 'pixi.js';
-import { Application, Container, Graphics } from 'pixi.js';
+import { Application, Container } from 'pixi.js';
 import './main.css';
 
 let app: Application;
+let ball: PIXI.Graphics;
 
 window.addEventListener('resize', () => {
     app.renderer.resize(window.innerWidth, window.innerHeight);
@@ -24,6 +25,12 @@ function createPixiApp(): PIXI.Application {
 function addGraphicsToApp(appToUpdate: PIXI.Application): void {
     drawPaddles(appToUpdate.stage);
     drawCenterLine(appToUpdate.stage);
+    ball = new PIXI.Graphics();
+    ball.beginFill(0xffffff);
+    ball.drawRect(0, 0, 30, 30);
+    ball.x = window.innerHeight / 2;
+    ball.y = window.innerWidth / 2;
+    appToUpdate.stage.addChild(ball);
 }
 
 function bootstrap(): void {
@@ -33,6 +40,7 @@ function bootstrap(): void {
     document.body.appendChild(view);
 
     addGraphicsToApp(app);
+    app.ticker.add((delta) => gameLoop(delta));
 }
 
 function drawPaddles(stage: Container): void {
@@ -66,3 +74,8 @@ function drawCenterLine(stage: Container): void {
         stage.addChild(centerLine);
     }
 }
+
+function gameLoop(delta: number): void{
+    // Move the cat 1 pixel
+    ball.x += 1 + delta;
+  }
