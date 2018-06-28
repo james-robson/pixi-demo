@@ -22,9 +22,8 @@ function createPixiApp(): PIXI.Application {
 }
 
 function addGraphicsToApp(appToUpdate: PIXI.Application): void {
-    const paddle = drawPaddle();
+    drawPaddles(appToUpdate.stage);
     drawCenterLine(appToUpdate.stage);
-    appToUpdate.stage.addChild(paddle);
 }
 
 function bootstrap(): void {
@@ -36,13 +35,18 @@ function bootstrap(): void {
     addGraphicsToApp(app);
 }
 
-function drawPaddle(): Graphics {
-    const paddle = new PIXI.Graphics();
-    paddle.beginFill(0xffffff);
-    paddle.drawRect(0, 0, 30, 150);
-    paddle.x = window.innerWidth / 3;
-    paddle.y = window.innerHeight / 3;
-    return paddle;
+function drawPaddles(stage: Container): void {
+    const leftPaddle = new PIXI.Graphics();
+    leftPaddle.beginFill(0xffffff);
+    leftPaddle.drawRect(0, 0, 30, 150);
+    leftPaddle.x = 100;
+    leftPaddle.y = window.innerHeight / 2 - (leftPaddle.height / 2);
+    stage.addChild(leftPaddle);
+
+    const rightPaddle = leftPaddle.clone();
+    rightPaddle.x = window.innerWidth - 100;
+    rightPaddle.y = window.innerHeight / 2 - (rightPaddle.height / 2);
+    stage.addChild(rightPaddle);
 }
 
 function drawCenterLine(stage: Container): void {
