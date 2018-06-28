@@ -47,24 +47,18 @@ function drawPaddle(): Graphics {
 
 function drawCenterLine(stage: Container): void {
     let lineLength = 0;
-    let fill = true;
 
     while (lineLength < window.innerHeight) {
         const centerLine = new PIXI.Graphics();
-        const dashLength = 100;
-        // Move it to the beginning of the line
+        const dashLength = 40;
         centerLine.position.set(window.innerWidth / 2, lineLength);
 
-        // Draw the line (endPoint should be relative to myGraph's position)
-        const colour = fill ? 0xffffff : 0x000000;
-
-        centerLine.lineStyle(20, colour)
+        centerLine.lineStyle(10, 0xffffff)
             .moveTo(0, 0)
             .lineTo(0, dashLength);
 
-        lineLength += dashLength;
-        fill = !fill;
-        console.log(`filling. lineLength: ${lineLength}, lineTo: ${dashLength}, colour: ${colour}`);
+        lineLength += dashLength * 2;
+
         stage.addChild(centerLine);
     }
 }
