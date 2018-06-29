@@ -3,6 +3,9 @@ import { Application, Container } from 'pixi.js';
 import './main.css';
 
 const radianMultiplier = Math.PI / 180;
+const maxBallAngle = 120;
+const minBallAngle = 60;
+const ballAngle = Math.round((Math.random() * (maxBallAngle - minBallAngle) + minBallAngle) / 10) * 10;
 
 let app: Application;
 let ball: PIXI.Graphics;
@@ -127,8 +130,7 @@ function drawCenterLine(stage: Container): void {
 }
 
 function gameLoop(delta: number): void {
-    const ballVelocityX = 3;
-    const ballVelocityY = 3;
+    const ballVelocity = 3;
     let paddle;
 
     // Only detect collisions on the paddle the ball is heading towards
@@ -144,12 +146,12 @@ function gameLoop(delta: number): void {
     }
 
     if (direction) {
-        ball.x += Math.sin(80 * radianMultiplier) * ballVelocityX;
-        ball.y += Math.cos(80 * radianMultiplier) * ballVelocityY;
+        ball.x += Math.sin(ballAngle * radianMultiplier) * ballVelocity;
+        ball.y += Math.cos(ballAngle * radianMultiplier) * ballVelocity;
         // ball.x += ballVelocityX;
     } else {
-        ball.x -= Math.sin(80 * radianMultiplier) * ballVelocityX;
-        ball.y -= Math.cos(80 * radianMultiplier) * ballVelocityY;
+        ball.x -= Math.sin(ballAngle * radianMultiplier) * ballVelocity;
+        ball.y -= Math.cos(ballAngle * radianMultiplier) * ballVelocity;
         // ball.x -= ballVelocityX;
     }
 
