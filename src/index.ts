@@ -37,8 +37,10 @@ function addGraphicsToApp(appToUpdate: PIXI.Application): void {
     ball = new PIXI.Graphics();
     ball.beginFill(0xffffff);
     ball.drawRect(0, 0, 30, 30);
-    ball.x = window.innerHeight / 2;
-    ball.y = window.innerWidth / 2;
+    ball.x = window.innerWidth / 2;
+    ball.y = window.innerHeight / 2;
+    console.log(ball.x);
+    console.log(ball.y);
     appToUpdate.stage.addChild(ball);
 }
 
@@ -143,12 +145,10 @@ function gameLoop(delta: number): void {
 
     if (direction) {
         ball.x += Math.sin(80 * radianMultiplier) * ballVelocityX;
-        console.log(ball.x);
         ball.y += Math.cos(80 * radianMultiplier) * ballVelocityY;
         // ball.x += ballVelocityX;
     } else {
         ball.x -= Math.sin(80 * radianMultiplier) * ballVelocityX;
-        console.log(ball.x);
         ball.y -= Math.cos(80 * radianMultiplier) * ballVelocityY;
         // ball.x -= ballVelocityX;
     }
