@@ -5,7 +5,7 @@ import './main.css';
 const radianMultiplier = Math.PI / 180;
 const maxBallAngle = 120;
 const minBallAngle = 60;
-const ballAngle = Math.round((Math.random() * (maxBallAngle - minBallAngle) + minBallAngle) / 10) * 10;
+let ballAngle = Math.round((Math.random() * (maxBallAngle - minBallAngle) + minBallAngle) / 10) * 10;
 
 let app: Application;
 let ball: PIXI.Graphics;
@@ -209,6 +209,42 @@ function detectBallCollision(paddle: PIXI.Graphics, currentBall: PIXI.Graphics):
 
         // There's definitely a collision happening
         hit = true;
+
+        // Set the ball return angle
+        console.log(vy);
+        switch (true) {
+            case vy > 60:
+                ballAngle = direction ? 40 : 140;
+                break;
+
+            case vy > 40:
+                ballAngle = direction ? 60 : 120;
+                break;
+
+            case vy > 20:
+                ballAngle = direction ? 80 : 100;
+                break;
+
+            case vy < 20 && vy > -20:
+                ballAngle = 90;
+                break;
+
+            case vy < -20:
+                ballAngle = direction ? 100 : 80;
+                break;
+
+            case vy < -40:
+                ballAngle = direction ? 120 : 60;
+                break;
+
+            case vy < -60:
+                ballAngle = direction ? 140 : 40;
+                break;
+
+            default:
+                ballAngle = 90;
+                break;
+        }
       } else {
 
         // There's no collision on the y axis
