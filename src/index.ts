@@ -7,6 +7,8 @@ let ball: PIXI.Graphics;
 let leftPaddle: PIXI.Graphics;
 let rightPaddle: PIXI.Graphics;
 let direction: boolean = true;
+let upPressed: boolean = false;
+let downPressed: boolean = false;
 
 window.addEventListener('resize', () => {
     app.renderer.resize(window.innerWidth, window.innerHeight);
@@ -46,11 +48,19 @@ function bootstrap(): void {
     const keyboardUp = new KeyListener(38); // Up arrow
     const keyboardDown = new KeyListener(40); // Down arrow
     keyboardUp.press = () => {
-        console.log('PRESSED UP');
+        upPressed = true;
+    };
+
+    keyboardUp.release = () => {
+        upPressed = false;
     };
 
     keyboardDown.press = () => {
-        console.log('PRESSED DOWN');
+        downPressed = true;
+    };
+
+    keyboardDown.release = () => {
+        downPressed = false;
     };
 
     app.ticker.add((delta) => gameLoop(delta));
@@ -107,6 +117,14 @@ function gameLoop(delta: number): void {
         ball.x += ballVelocityX;
     } else {
         ball.x -= ballVelocityX;
+    }
+
+    if (upPressed) {
+        rightPaddle.y -= 10;
+    }
+
+    if (downPressed) {
+        rightPaddle.y += 10;
     }
 }
 
@@ -165,10 +183,10 @@ function detectBallCollision(paddle: PIXI.Graphics, currentBall: PIXI.Graphics):
 class KeyListener {
     public press: () => void;
     public release: () => void;
+    public isDown: boolean = false;
+    public isUp: boolean =  true;
 
     private code: number;
-    private isDown: boolean = false;
-    private isUp: boolean =  true;
 
     constructor(keyCode: number) {
         this.code = keyCode;
@@ -183,9 +201,9 @@ class KeyListener {
 
     private downHandler = (event: KeyboardEvent) => {
         if (event.keyCode === this.code) {
-          if (this.isUp && this.press) { this.press(); }
-          this.isDown = true;
-          this.isUp = false;
+            this.isDown = true;
+            this.isUp = false;
+            this.press();
         }
         event.preventDefault();
       }
