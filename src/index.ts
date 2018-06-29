@@ -2,6 +2,8 @@ import * as PIXI from 'pixi.js';
 import { Application, Container } from 'pixi.js';
 import './main.css';
 
+const radianMultiplier = Math.PI / 180;
+
 let app: Application;
 let ball: PIXI.Graphics;
 let leftPaddle: PIXI.Graphics;
@@ -124,6 +126,7 @@ function drawCenterLine(stage: Container): void {
 
 function gameLoop(delta: number): void {
     const ballVelocityX = 3;
+    const ballVelocityY = 3;
     let paddle;
 
     // Only detect collisions on the paddle the ball is heading towards
@@ -139,9 +142,15 @@ function gameLoop(delta: number): void {
     }
 
     if (direction) {
-        ball.x += ballVelocityX;
+        ball.x += Math.sin(80 * radianMultiplier) * ballVelocityX;
+        console.log(ball.x);
+        ball.y += Math.cos(80 * radianMultiplier) * ballVelocityY;
+        // ball.x += ballVelocityX;
     } else {
-        ball.x -= ballVelocityX;
+        ball.x -= Math.sin(80 * radianMultiplier) * ballVelocityX;
+        console.log(ball.x);
+        ball.y -= Math.cos(80 * radianMultiplier) * ballVelocityY;
+        // ball.x -= ballVelocityX;
     }
 
     if (playerOneUpPressed && leftPaddle.y > 0) {
