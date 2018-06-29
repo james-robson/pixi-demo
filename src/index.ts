@@ -42,8 +42,6 @@ function addGraphicsToApp(appToUpdate: PIXI.Application): void {
     ball.drawRect(0, 0, 30, 30);
     ball.x = window.innerWidth / 2;
     ball.y = window.innerHeight / 2;
-    console.log(ball.x);
-    console.log(ball.y);
     appToUpdate.stage.addChild(ball);
 }
 
@@ -140,19 +138,19 @@ function gameLoop(delta: number): void {
         paddle = leftPaddle;
     }
 
-    const collision = detectBallCollision(paddle, ball);
-    if (collision) {
+    const paddleCollision = detectPaddleCollision(paddle, ball);
+    if (paddleCollision) {
         direction = !direction;
     }
+
+    const sideCollision = detectSideCollision(ball);
 
     if (direction) {
         ball.x += Math.sin(ballAngle * radianMultiplier) * ballVelocity;
         ball.y += Math.cos(ballAngle * radianMultiplier) * ballVelocity;
-        // ball.x += ballVelocityX;
     } else {
         ball.x -= Math.sin(ballAngle * radianMultiplier) * ballVelocity;
         ball.y -= Math.cos(ballAngle * radianMultiplier) * ballVelocity;
-        // ball.x -= ballVelocityX;
     }
 
     if (playerOneUpPressed && leftPaddle.y > 0) {
@@ -173,7 +171,7 @@ function gameLoop(delta: number): void {
 }
 
 // tslint:disable-next-line:no-shadowed-variable
-function detectBallCollision(paddle: PIXI.Graphics, currentBall: PIXI.Graphics): boolean {
+function detectPaddleCollision(paddle: PIXI.Graphics, currentBall: PIXI.Graphics): boolean {
 
     // Define the variables we'll need to calculate
     let hit, combinedHalfWidths, combinedHalfHeights, vx, vy;
@@ -211,7 +209,6 @@ function detectBallCollision(paddle: PIXI.Graphics, currentBall: PIXI.Graphics):
         hit = true;
 
         // Set the ball return angle
-        console.log(vy);
         switch (true) {
             case vy > 60:
                 ballAngle = direction ? 40 : 140;
@@ -259,6 +256,18 @@ function detectBallCollision(paddle: PIXI.Graphics, currentBall: PIXI.Graphics):
     // `hit` will be either `true` or `false`
     return hit;
   }
+
+function detectSideCollision(currentBall: PIXI.Graphics): void {
+    // Top collision
+    if (currentBall.y < 0) {
+        ballAngle = 180 - ballAngle;
+    }
+
+    // Bottom collision
+    if ((currentBall.y + ball.height) >= window.innerHeight) {
+        ballAngle = 180 - ballAngle;
+    }
+}
 
 class KeyListener {
     public press: () => void;
