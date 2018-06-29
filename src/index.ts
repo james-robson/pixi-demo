@@ -7,8 +7,10 @@ let ball: PIXI.Graphics;
 let leftPaddle: PIXI.Graphics;
 let rightPaddle: PIXI.Graphics;
 let direction: boolean = true;
-let upPressed: boolean = false;
-let downPressed: boolean = false;
+let playerOneUpPressed: boolean = false;
+let playerOneDownPressed: boolean = false;
+let playerTwoUpPressed: boolean = false;
+let playerTwoDownPressed: boolean = false;
 
 window.addEventListener('resize', () => {
     app.renderer.resize(window.innerWidth, window.innerHeight);
@@ -45,25 +47,47 @@ function bootstrap(): void {
     document.body.appendChild(view);
 
     addGraphicsToApp(app);
-    const keyboardUp = new KeyListener(38); // Up arrow
-    const keyboardDown = new KeyListener(40); // Down arrow
-    keyboardUp.press = () => {
-        upPressed = true;
-    };
-
-    keyboardUp.release = () => {
-        upPressed = false;
-    };
-
-    keyboardDown.press = () => {
-        downPressed = true;
-    };
-
-    keyboardDown.release = () => {
-        downPressed = false;
-    };
+    addButtonListeners();
 
     app.ticker.add((delta) => gameLoop(delta));
+}
+
+function addButtonListeners(): void {
+    const playerOneKeyboardUp = new KeyListener(87); // W key
+    const playerOneKeyboardDown = new KeyListener(83); // S key
+    playerOneKeyboardUp.press = () => {
+        playerOneUpPressed = true;
+    };
+
+    playerOneKeyboardUp.release = () => {
+        playerOneUpPressed = false;
+    };
+
+    playerOneKeyboardDown.press = () => {
+        playerOneDownPressed = true;
+    };
+
+    playerOneKeyboardDown.release = () => {
+        playerOneDownPressed = false;
+    };
+
+    const playerTwoKeyboardUp = new KeyListener(38); // Up arrow
+    const playerTwoKeyboardDown = new KeyListener(40); // Down arrow
+    playerTwoKeyboardUp.press = () => {
+        playerTwoUpPressed = true;
+    };
+
+    playerTwoKeyboardUp.release = () => {
+        playerTwoUpPressed = false;
+    };
+
+    playerTwoKeyboardDown.press = () => {
+        playerTwoDownPressed = true;
+    };
+
+    playerTwoKeyboardDown.release = () => {
+        playerTwoDownPressed = false;
+    };
 }
 
 function drawPaddles(stage: Container): void {
@@ -101,6 +125,8 @@ function drawCenterLine(stage: Container): void {
 function gameLoop(delta: number): void {
     const ballVelocityX = 3;
     let paddle;
+
+    // Only detect collisions on the paddle the ball is heading towards
     if (direction) {
         paddle = rightPaddle;
     } else {
@@ -112,18 +138,25 @@ function gameLoop(delta: number): void {
         direction = !direction;
     }
 
-    // Move the ball 1 pixel
     if (direction) {
         ball.x += ballVelocityX;
     } else {
         ball.x -= ballVelocityX;
     }
 
-    if (upPressed) {
+    if (playerOneUpPressed && leftPaddle.y > 0) {
+        leftPaddle.y -= 10;
+    }
+
+    if (playerOneDownPressed && (leftPaddle.y + leftPaddle.height) < window.innerHeight) {
+        leftPaddle.y += 10;
+    }
+
+    if (playerTwoUpPressed && rightPaddle.y > 0) {
         rightPaddle.y -= 10;
     }
 
-    if (downPressed) {
+    if (playerTwoDownPressed && (rightPaddle.y + rightPaddle.height) < window.innerHeight) {
         rightPaddle.y += 10;
     }
 }
