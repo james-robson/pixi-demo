@@ -43,6 +43,16 @@ function bootstrap(): void {
     document.body.appendChild(view);
 
     addGraphicsToApp(app);
+    const keyboardUp = new KeyListener(38); // Up arrow
+    const keyboardDown = new KeyListener(40); // Down arrow
+    keyboardUp.press = () => {
+        console.log('PRESSED UP');
+    };
+
+    keyboardDown.press = () => {
+        console.log('PRESSED DOWN');
+    };
+
     app.ticker.add((delta) => gameLoop(delta));
 }
 
@@ -151,3 +161,42 @@ function detectBallCollision(paddle: PIXI.Graphics, currentBall: PIXI.Graphics):
     // `hit` will be either `true` or `false`
     return hit;
   }
+
+class KeyListener {
+    public press: () => void;
+    public release: () => void;
+
+    private code: number;
+    private isDown: boolean = false;
+    private isUp: boolean =  true;
+
+    constructor(keyCode: number) {
+        this.code = keyCode;
+        // Attach event listeners
+        window.addEventListener(
+            'keydown', this.downHandler.bind(this), false
+        );
+        window.addEventListener(
+            'keyup', this.upHandler.bind(this), false
+        );
+    }
+
+    private downHandler = (event: KeyboardEvent) => {
+        if (event.keyCode === this.code) {
+          if (this.isUp && this.press) { this.press(); }
+          this.isDown = true;
+          this.isUp = false;
+        }
+        event.preventDefault();
+      }
+
+      // The `upHandler`
+    private upHandler = (event: KeyboardEvent) => {
+        if (event.keyCode === this.code) {
+            if (this.isDown && this.release) { this.release(); }
+            this.isDown = false;
+            this.isUp = true;
+        }
+        event.preventDefault();
+    }
+}
