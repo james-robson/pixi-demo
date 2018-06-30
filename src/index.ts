@@ -128,7 +128,7 @@ function drawCenterLine(stage: Container): void {
 }
 
 function gameLoop(delta: number): void {
-    const ballVelocity = 3;
+    const ballVelocity = 10;
     let paddle;
 
     // Only detect collisions on the paddle the ball is heading towards
@@ -138,12 +138,9 @@ function gameLoop(delta: number): void {
         paddle = leftPaddle;
     }
 
-    const paddleCollision = detectPaddleCollision(paddle, ball);
-    if (paddleCollision) {
-        direction = !direction;
-    }
-
-    const sideCollision = detectSideCollision(ball);
+    detectPaddleCollision(paddle, ball);
+    detectSideCollision(ball);
+    detectGoal(ball);
 
     if (direction) {
         ball.x += Math.sin(ballAngle * radianMultiplier) * ballVelocity;
@@ -171,7 +168,7 @@ function gameLoop(delta: number): void {
 }
 
 // tslint:disable-next-line:no-shadowed-variable
-function detectPaddleCollision(paddle: PIXI.Graphics, currentBall: PIXI.Graphics): boolean {
+function detectPaddleCollision(paddle: PIXI.Graphics, currentBall: PIXI.Graphics): void {
 
     // Define the variables we'll need to calculate
     let hit, combinedHalfWidths, combinedHalfHeights, vx, vy;
@@ -253,8 +250,9 @@ function detectPaddleCollision(paddle: PIXI.Graphics, currentBall: PIXI.Graphics
       hit = false;
     }
 
-    // `hit` will be either `true` or `false`
-    return hit;
+    if (hit) {
+        direction = !direction;
+    }
   }
 
 function detectSideCollision(currentBall: PIXI.Graphics): void {
@@ -266,6 +264,20 @@ function detectSideCollision(currentBall: PIXI.Graphics): void {
     // Bottom collision
     if ((currentBall.y + ball.height) >= window.innerHeight) {
         ballAngle = 180 - ballAngle;
+    }
+}
+
+function detectGoal(currentBall: PIXI.Graphics): void {
+    // Left Goal
+    if (currentBall.x < 0) {
+        console.log('RIGHT SCORES!');
+        app.ticker.stop();
+    }
+
+    // Right goal
+    if ((currentBall.x + ball.width) >= window.innerWidth) {
+        console.log('LEFT SCORES!');
+        app.ticker.stop();
     }
 }
 
