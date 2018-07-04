@@ -1,15 +1,10 @@
 import * as PIXI from 'pixi.js';
 import { Application, Container } from 'pixi.js';
 import './main.css';
-
-const radianMultiplier = Math.PI / 180;
-const maxBallAngle = 120;
-const minBallAngle = 60;
-const ballVelocity = 10;
-let ballAngle = Math.round((Math.random() * (maxBallAngle - minBallAngle) + minBallAngle) / 10) * 10;
+import { Ball } from './sprites/ball';
 
 let app: Application;
-let ball: PIXI.Graphics;
+const ball = new Ball();
 let leftPaddle: PIXI.Graphics;
 let rightPaddle: PIXI.Graphics;
 let direction: boolean = true;
@@ -38,12 +33,7 @@ function createPixiApp(): PIXI.Application {
 function addGraphicsToApp(appToUpdate: PIXI.Application): void {
     drawPaddles(appToUpdate.stage);
     drawCenterLine(appToUpdate.stage);
-    ball = new PIXI.Graphics();
-    ball.beginFill(0xffffff);
-    ball.drawRect(0, 0, 30, 30);
-    ball.x = window.innerWidth / 2;
-    ball.y = window.innerHeight / 2;
-    appToUpdate.stage.addChild(ball);
+    appToUpdate.stage.addChild(ball.sprite);
 }
 
 function bootstrap(): void {
@@ -143,16 +133,7 @@ function gameLoop(delta: number): void {
     detectSideCollision(ball);
     detectGoal(ball);
 
-    if (direction) {
-        // PERF: This part only needs to be calculated once when the angle changes. In fact, because there are a fixed
-        // set of angles these could be pre-calculated, not done in the game loop.
-        //      Math.sin(ballAngle * radianMultiplier) * ballVelocity);
-        ball.x += Math.sin(ballAngle * radianMultiplier) * ballVelocity;
-        ball.y += Math.cos(ballAngle * radianMultiplier) * ballVelocity;
-    } else {
-        ball.x -= Math.sin(ballAngle * radianMultiplier) * ballVelocity;
-        ball.y -= Math.cos(ballAngle * radianMultiplier) * ballVelocity;
-    }
+    ball.calculateRebound(direction);
 
     if (playerOneUpPressed && leftPaddle.y > 0) {
         leftPaddle.y -= 10;
@@ -172,7 +153,7 @@ function gameLoop(delta: number): void {
 }
 
 // tslint:disable-next-line:no-shadowed-variable
-function detectPaddleCollision(paddle: PIXI.Graphics, currentBall: PIXI.Graphics): void {
+function detectPaddleCollision(paddle: PIXI.Graphics, currentBall: Ball): void {
 
     // Define the variables we'll need to calculate
     let hit, combinedHalfWidths, combinedHalfHeights, vx, vy;
@@ -183,14 +164,14 @@ function detectPaddleCollision(paddle: PIXI.Graphics, currentBall: PIXI.Graphics
     // Find the center points of each sprite
     const paddleCenterX = paddle.x + paddle.width / 2;
     const paddleCenterY = paddle.y + paddle.height / 2;
-    const ballCenterX = currentBall.x + currentBall.width / 2;
-    const ballCenterY = currentBall.y + currentBall.height / 2;
+    const ballCenterX = currentBall.sprite.x + currentBall.sprite.width / 2;
+    const ballCenterY = currentBall.sprite.y + currentBall.sprite.height / 2;
 
     // Find the half-widths and half-heights of each sprite
     const paddleHalfWidth = paddle.width / 2;
     const paddleHalfHeight = paddle.height / 2;
-    const ballHalfWidth = currentBall.width / 2;
-    const ballHalfHeight = currentBall.height / 2;
+    const ballHalfWidth = ball.sprite.width / 2;
+    const ballHalfHeight = ball.sprite.height / 2;
 
     // Calculate the distance vector between the sprites
     vx = paddleCenterX - ballCenterX;
@@ -213,35 +194,35 @@ function detectPaddleCollision(paddle: PIXI.Graphics, currentBall: PIXI.Graphics
         // PERF: This is a really dumb way to do this...
         switch (true) {
             case vy > 60:
-                ballAngle = direction ? 40 : 140;
+                currentBall.setAngle(direction ? 40 : 140);
                 break;
 
             case vy > 40:
-                ballAngle = direction ? 60 : 120;
+                currentBall.setAngle(direction ? 60 : 120);
                 break;
 
             case vy > 20:
-                ballAngle = direction ? 80 : 100;
+                currentBall.setAngle(direction ? 80 : 100);
                 break;
 
             case vy < 20 && vy > -20:
-                ballAngle = 90;
+                currentBall.setAngle(90);
                 break;
 
             case vy < -20:
-                ballAngle = direction ? 100 : 80;
+                currentBall.setAngle(direction ? 100 : 80);
                 break;
 
             case vy < -40:
-                ballAngle = direction ? 120 : 60;
+                currentBall.setAngle(direction ? 120 : 60);
                 break;
 
             case vy < -60:
-                ballAngle = direction ? 140 : 40;
+                currentBall.setAngle(direction ? 140 : 40);
                 break;
 
             default:
-                ballAngle = 90;
+                currentBall.setAngle(90);
                 break;
         }
       } else {
@@ -260,21 +241,21 @@ function detectPaddleCollision(paddle: PIXI.Graphics, currentBall: PIXI.Graphics
     }
   }
 
-function detectSideCollision(currentBall: PIXI.Graphics): void {
+function detectSideCollision(currentBall: Ball): void {
     // Top collision
-    if (currentBall.y < 0) {
-        ballAngle = 180 - ballAngle;
+    if (currentBall.sprite.y < 0) {
+        currentBall.invertAngle();
     }
 
     // Bottom collision
-    if ((currentBall.y + ball.height) >= window.innerHeight) {
-        ballAngle = 180 - ballAngle;
+    if ((currentBall.sprite.y + currentBall.sprite.height) >= window.innerHeight) {
+        currentBall.invertAngle();
     }
 }
 
-function detectGoal(currentBall: PIXI.Graphics): void {
+function detectGoal(currentBall: Ball): void {
     // Left Goal
-    if (currentBall.x < 0) {
+    if (currentBall.sprite.x < 0) {
         console.log('RIGHT SCORES!');
         const text = new PIXI.Text('RIGHT SCORES', {fontFamily : 'Arial', fontSize: 24, fill : 0xff1010, align : 'center'});
         app.stage.addChild(text);
@@ -282,7 +263,7 @@ function detectGoal(currentBall: PIXI.Graphics): void {
     }
 
     // Right goal
-    if ((currentBall.x + ball.width) >= window.innerWidth) {
+    if ((currentBall.sprite.x + ball.sprite.width) >= window.innerWidth) {
         console.log('LEFT SCORES!');
         app.ticker.stop();
     }
