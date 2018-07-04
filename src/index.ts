@@ -2,11 +2,12 @@ import * as PIXI from 'pixi.js';
 import { Application, Container } from 'pixi.js';
 import './main.css';
 import { Ball } from './sprites/ball';
+import { Paddle } from './sprites/paddle';
 
 let app: Application;
 const ball = new Ball();
-let leftPaddle: PIXI.Graphics;
-let rightPaddle: PIXI.Graphics;
+const leftPaddle = new Paddle(100);
+const rightPaddle = new Paddle(window.innerWidth - 100);
 let direction: boolean = true;
 let playerOneUpPressed: boolean = false;
 let playerOneDownPressed: boolean = false;
@@ -87,17 +88,8 @@ function addButtonListeners(): void {
 }
 
 function drawPaddles(stage: Container): void {
-    leftPaddle = new PIXI.Graphics();
-    leftPaddle.beginFill(0xffffff);
-    leftPaddle.drawRect(0, 0, 30, 150);
-    leftPaddle.x = 100;
-    leftPaddle.y = window.innerHeight / 2 - (leftPaddle.height / 2);
-    stage.addChild(leftPaddle);
-
-    rightPaddle = leftPaddle.clone();
-    rightPaddle.x = window.innerWidth - 100;
-    rightPaddle.y = window.innerHeight / 2 - (rightPaddle.height / 2);
-    stage.addChild(rightPaddle);
+    stage.addChild(leftPaddle.sprite);
+    stage.addChild(rightPaddle.sprite);
 }
 
 function drawCenterLine(stage: Container): void {
@@ -135,25 +127,25 @@ function gameLoop(delta: number): void {
 
     ball.calculateRebound(direction);
 
-    if (playerOneUpPressed && leftPaddle.y > 0) {
-        leftPaddle.y -= 10;
+    if (playerOneUpPressed && leftPaddle.sprite.y > 0) {
+        leftPaddle.moveUp();
     }
 
-    if (playerOneDownPressed && (leftPaddle.y + leftPaddle.height) < window.innerHeight) {
-        leftPaddle.y += 10;
+    if (playerOneDownPressed && (leftPaddle.sprite.y + leftPaddle.sprite.height) < window.innerHeight) {
+        leftPaddle.moveDown();
     }
 
-    if (playerTwoUpPressed && rightPaddle.y > 0) {
-        rightPaddle.y -= 10;
+    if (playerTwoUpPressed && rightPaddle.sprite.y > 0) {
+        rightPaddle.moveUp();
     }
 
-    if (playerTwoDownPressed && (rightPaddle.y + rightPaddle.height) < window.innerHeight) {
-        rightPaddle.y += 10;
+    if (playerTwoDownPressed && (rightPaddle.sprite.y + rightPaddle.sprite.height) < window.innerHeight) {
+        rightPaddle.moveDown();
     }
 }
 
 // tslint:disable-next-line:no-shadowed-variable
-function detectPaddleCollision(paddle: PIXI.Graphics, currentBall: Ball): void {
+function detectPaddleCollision(paddle: Paddle, currentBall: Ball): void {
 
     // Define the variables we'll need to calculate
     let hit, combinedHalfWidths, combinedHalfHeights, vx, vy;
@@ -162,14 +154,14 @@ function detectPaddleCollision(paddle: PIXI.Graphics, currentBall: Ball): void {
     hit = false;
 
     // Find the center points of each sprite
-    const paddleCenterX = paddle.x + paddle.width / 2;
-    const paddleCenterY = paddle.y + paddle.height / 2;
+    const paddleCenterX = paddle.sprite.x + paddle.sprite.width / 2;
+    const paddleCenterY = paddle.sprite.y + paddle.sprite.height / 2;
     const ballCenterX = currentBall.sprite.x + currentBall.sprite.width / 2;
     const ballCenterY = currentBall.sprite.y + currentBall.sprite.height / 2;
 
     // Find the half-widths and half-heights of each sprite
-    const paddleHalfWidth = paddle.width / 2;
-    const paddleHalfHeight = paddle.height / 2;
+    const paddleHalfWidth = paddle.sprite.width / 2;
+    const paddleHalfHeight = paddle.sprite.height / 2;
     const ballHalfWidth = ball.sprite.width / 2;
     const ballHalfHeight = ball.sprite.height / 2;
 
