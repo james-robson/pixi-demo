@@ -8,13 +8,26 @@ import { CenterLine } from './sprites/centerLine';
 import { Paddle } from './sprites/paddle';
 
 let app: Application;
-const ball = new Ball();
+
+let ball = new Ball();
 const leftPaddle = new Paddle(100);
 const rightPaddle = new Paddle(window.innerWidth - 100);
+
 const playerOneKeyboardUp = new KeyListener(87); // W key
 const playerOneKeyboardDown = new KeyListener(83); // S key
 const playerTwoKeyboardUp = new KeyListener(38); // Up arrow
 const playerTwoKeyboardDown = new KeyListener(40); // Down arrow
+
+let playerOneScore = 0;
+const playerOneScoreText = new PIXI.Text('', {fontFamily : 'Arial', fontSize: 72, fill : 0xffffff, align : 'center'});
+playerOneScoreText.anchor.set(0.5, 0.5);
+playerOneScoreText.position.set(window.innerWidth / 4, 100);
+
+let playerTwoScore = 0;
+const playerTwoScoreText = new PIXI.Text('', {fontFamily : 'Arial', fontSize: 72, fill : 0xffffff, align : 'center'});
+playerTwoScoreText.anchor.set(0.5, 0.5);
+playerTwoScoreText.position.set((window.innerWidth / 4) * 3, 100);
+
 let direction: boolean = true;
 
 window.addEventListener('resize', () => {
@@ -37,11 +50,16 @@ function createPixiApp(): PIXI.Application {
 function addGraphicsToApp(appToUpdate: PIXI.Application): void {
     appToUpdate.stage.addChild(leftPaddle.sprite);
     appToUpdate.stage.addChild(rightPaddle.sprite);
+
     const centerLines = new CenterLine();
     centerLines.sprites.forEach((line: PIXI.Graphics) => {
         appToUpdate.stage.addChild(line);
     });
+
     appToUpdate.stage.addChild(ball.sprite);
+
+    app.stage.addChild(playerOneScoreText);
+    app.stage.addChild(playerTwoScoreText);
 }
 
 function bootstrap(): void {
@@ -122,9 +140,21 @@ function gameLoop(delta: number): void {
     }
 
     if (collisions.goal(ball)) {
-        const text = new PIXI.Text('SCORE!!!', {fontFamily : 'Arial', fontSize: 24, fill : 0xff1010, align : 'center'});
-        app.stage.addChild(text);
+        if (direction) {
+            playerOneScore++;
+            playerOneScoreText.text = playerOneScore.toString();
+        } else {
+            playerTwoScore++;
+            playerTwoScoreText.text = playerTwoScore.toString();
+        }
         app.ticker.stop();
+
+        setTimeout(() => {
+            app.stage.removeChild(ball.sprite);
+            ball = new Ball();
+            app.stage.addChild(ball.sprite);
+            app.ticker.start();
+        }, 3000);
     }
 
     ball.calculateRebound(direction);
