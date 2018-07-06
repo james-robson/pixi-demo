@@ -35,8 +35,12 @@ function createPixiApp(): PIXI.Application {
 }
 
 function addGraphicsToApp(appToUpdate: PIXI.Application): void {
-    drawPaddles(appToUpdate.stage);
-    drawCenterLine(appToUpdate.stage);
+    appToUpdate.stage.addChild(leftPaddle.sprite);
+    appToUpdate.stage.addChild(rightPaddle.sprite);
+    const centerLines = new CenterLine();
+    centerLines.sprites.forEach((line: PIXI.Graphics) => {
+        appToUpdate.stage.addChild(line);
+    });
     appToUpdate.stage.addChild(ball.sprite);
 }
 
@@ -49,18 +53,6 @@ function bootstrap(): void {
     addGraphicsToApp(app);
 
     app.ticker.add((delta) => gameLoop(delta));
-}
-
-function drawPaddles(stage: Container): void {
-    stage.addChild(leftPaddle.sprite);
-    stage.addChild(rightPaddle.sprite);
-}
-
-function drawCenterLine(stage: Container): void {
-    const centerLines = new CenterLine();
-    centerLines.sprites.forEach((line: PIXI.Graphics) => {
-        stage.addChild(line);
-    });
 }
 
 function gameLoop(delta: number): void {
