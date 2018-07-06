@@ -19,12 +19,12 @@ const playerTwoKeyboardUp = new KeyListener(38); // Up arrow
 const playerTwoKeyboardDown = new KeyListener(40); // Down arrow
 
 let playerOneScore = 0;
-const playerOneScoreText = new PIXI.Text('', {fontFamily : 'Arial', fontSize: 72, fill : 0xffffff, align : 'center'});
+const playerOneScoreText = new PIXI.Text('0', {fontFamily : 'Arial', fontSize: 72, fill : 0xffffff, align : 'center'});
 playerOneScoreText.anchor.set(0.5, 0.5);
 playerOneScoreText.position.set(window.innerWidth / 4, 100);
 
 let playerTwoScore = 0;
-const playerTwoScoreText = new PIXI.Text('', {fontFamily : 'Arial', fontSize: 72, fill : 0xffffff, align : 'center'});
+const playerTwoScoreText = new PIXI.Text('0', {fontFamily : 'Arial', fontSize: 72, fill : 0xffffff, align : 'center'});
 playerTwoScoreText.anchor.set(0.5, 0.5);
 playerTwoScoreText.position.set((window.innerWidth / 4) * 3, 100);
 
