@@ -4,6 +4,7 @@ import * as collisions from './lib/collisionDetection';
 import { KeyListener } from './lib/keyListener';
 import './main.css';
 import { Ball } from './sprites/ball';
+import { CenterLine } from './sprites/centerLine';
 import { Paddle } from './sprites/paddle';
 
 let app: Application;
@@ -56,21 +57,10 @@ function drawPaddles(stage: Container): void {
 }
 
 function drawCenterLine(stage: Container): void {
-    let lineLength = 0;
-
-    while (lineLength < window.innerHeight) {
-        const centerLine = new PIXI.Graphics();
-        const dashLength = 40;
-        centerLine.position.set(window.innerWidth / 2, lineLength);
-
-        centerLine.lineStyle(10, 0xffffff)
-            .moveTo(0, 0)
-            .lineTo(0, dashLength);
-
-        lineLength += dashLength * 2;
-
-        stage.addChild(centerLine);
-    }
+    const centerLines = new CenterLine();
+    centerLines.sprites.forEach((line: PIXI.Graphics) => {
+        stage.addChild(line);
+    });
 }
 
 function gameLoop(delta: number): void {
@@ -95,7 +85,6 @@ function gameLoop(delta: number): void {
 
     // PERF: It should be easy to work out if a ball is near either a paddle, side or goal without testing all three
     if (collisions.paddle(currentPaddle, ball, vx, vy)) {
-        direction = !direction;
 
         // Set the ball return angle
         // PERF: This is a really dumb way to do this...
@@ -132,6 +121,8 @@ function gameLoop(delta: number): void {
                 ball.setAngle(90);
                 break;
         }
+
+        direction = !direction;
     }
 
     if (collisions.side(ball)) {
