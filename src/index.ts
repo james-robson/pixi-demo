@@ -78,12 +78,12 @@ function gameLoop(delta: number): void {
     state(delta);
 }
 
-function score (delta: number) {
+function score (delta: number): void {
     // You can still move while the score animation plays
     detectMovement();
 }
 
-function play (delta: number) {
+function play (delta: number): void {
     // Find the center points of each sprite
     const paddleCenterX = currentPaddle.sprite.x + currentPaddle.sprite.width / 2;
     const paddleCenterY = currentPaddle.sprite.y + currentPaddle.sprite.height / 2;
@@ -171,7 +171,7 @@ function play (delta: number) {
 
 }
 
-function detectMovement() {
+function detectMovement(): void {
     if (playerOneKeyboardUp.isDown && leftPaddle.sprite.y > 0) {
         leftPaddle.moveUp();
     }
