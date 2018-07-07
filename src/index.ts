@@ -98,6 +98,14 @@ function score (delta: number): void {
     detectMovement();
 }
 
+function win (): void {
+    const winningPlayer = (playerOneScore === 10) ? 'ONE' : 'TWO';
+    const winText = new PIXI.Text(`PLAYER ${winningPlayer} WINS!`, {fontFamily : 'Press Start 2P', fontSize: 52, fill : 0xffffff, align : 'center'});
+    winText.anchor.set(0.5, 0.5);
+    winText.position.set(window.innerWidth / 2, window.innerHeight / 2);
+    app.stage.addChild(winText);
+}
+
 function startPlaying(): void {
     state = play;
     addGraphicsToApp(app);
@@ -188,6 +196,11 @@ function play (delta: number): void {
         } else {
             playerTwoScore++;
             playerTwoScoreText.text = playerTwoScore.toString();
+        }
+
+        if (playerOneScore === 10 || playerTwoScore === 10) {
+            state = win;
+            return;
         }
 
         state = score;
