@@ -8,10 +8,11 @@ import { CenterLine } from './sprites/centerLine';
 import { Paddle } from './sprites/paddle';
 
 let app: Application;
-
+let state = play;
 let ball = new Ball();
 const leftPaddle = new Paddle(100);
 const rightPaddle = new Paddle(window.innerWidth - 100);
+let currentPaddle = rightPaddle;
 
 const playerOneKeyboardUp = new KeyListener(87); // W key
 const playerOneKeyboardDown = new KeyListener(83); // S key
@@ -74,15 +75,15 @@ function bootstrap(): void {
 }
 
 function gameLoop(delta: number): void {
-    let currentPaddle;
+    state(delta);
+}
 
-    // Only detect collisions on the paddle the ball is heading towards
-    if (direction) {
-        currentPaddle = rightPaddle;
-    } else {
-        currentPaddle = leftPaddle;
-    }
+function score (delta: number) {
+    // You can still move while the score animation plays
+    detectMovement();
+}
 
+function play (delta: number) {
     // Find the center points of each sprite
     const paddleCenterX = currentPaddle.sprite.x + currentPaddle.sprite.width / 2;
     const paddleCenterY = currentPaddle.sprite.y + currentPaddle.sprite.height / 2;
@@ -133,6 +134,7 @@ function gameLoop(delta: number): void {
         }
 
         direction = !direction;
+        currentPaddle = direction ? rightPaddle : leftPaddle;
     }
 
     if (collisions.side(ball)) {
@@ -147,18 +149,29 @@ function gameLoop(delta: number): void {
             playerTwoScore++;
             playerTwoScoreText.text = playerTwoScore.toString();
         }
-        app.ticker.stop();
+
+        state = score;
+
+        const flashing = setInterval(() => {
+            ball.sprite.alpha = ball.sprite.alpha ? 0 : 1;
+        }, 200);
 
         setTimeout(() => {
+            clearInterval(flashing);
             app.stage.removeChild(ball.sprite);
             ball = new Ball();
             app.stage.addChild(ball.sprite);
+            state = play;
             app.ticker.start();
         }, 3000);
     }
 
     ball.calculateRebound(direction);
+    detectMovement();
 
+}
+
+function detectMovement() {
     if (playerOneKeyboardUp.isDown && leftPaddle.sprite.y > 0) {
         leftPaddle.moveUp();
     }
