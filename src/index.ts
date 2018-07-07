@@ -8,7 +8,7 @@ import { Ball } from './sprites/ball';
 import { CenterLine } from './sprites/centerLine';
 import { Paddle } from './sprites/paddle';
 
-import './assets/loading.gif';
+import './assets/images/loading.gif';
 
 let app: Application;
 let state: ((delta: number) => void);
