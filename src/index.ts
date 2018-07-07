@@ -1,5 +1,7 @@
 import * as PIXI from 'pixi.js';
-import { Application, Container } from 'pixi.js';
+
+import 'pixi-sound';
+import { Application } from 'pixi.js';
 import * as WebFont from 'webfontloader';
 import * as collisions from './lib/collisionDetection';
 import { KeyListener } from './lib/keyListener';
@@ -9,6 +11,14 @@ import { CenterLine } from './sprites/centerLine';
 import { Paddle } from './sprites/paddle';
 
 import './assets/images/loading.gif';
+
+import './assets/sounds/beeep.ogg';
+import './assets/sounds/peeeeeep.ogg';
+import './assets/sounds/plop.ogg';
+
+const sideHitSound = PIXI.sound.Sound.from('./assets/sounds/plop.ogg');
+const paddleHitSound = PIXI.sound.Sound.from('./assets/sounds/beeep.ogg');
+const scoreSound = PIXI.sound.Sound.from('./assets/sounds/peeeeeep.ogg');
 
 let app: Application;
 let state: ((delta: number) => void);
@@ -110,6 +120,7 @@ function play (delta: number): void {
 
     // PERF: It should be easy to work out if a ball is near either a paddle, side or goal without testing all three
     if (collisions.paddle(currentPaddle, ball, vx, vy)) {
+        paddleHitSound.play();
 
         // Set the ball return angle
         // PERF: This is a really dumb way to do this...
@@ -152,10 +163,12 @@ function play (delta: number): void {
     }
 
     if (collisions.side(ball)) {
+        sideHitSound.play();
         ball.invertAngle();
     }
 
     if (collisions.goal(ball)) {
+        scoreSound.play();
         if (direction) {
             playerOneScore++;
             playerOneScoreText.text = playerOneScore.toString();

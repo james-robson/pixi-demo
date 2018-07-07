@@ -7,7 +7,11 @@ module.exports = {
     rules: [
       {
         test: /\.(png|jpg|gif)$/,
-        loader: "file-loader?limit=50000&name=assets/[name].[ext]"
+        loader: 'file-loader?limit=50000&name=assets/images/[name].[ext]'
+      },
+      {
+        test: /\.(ogg|mp3|wav|mpe?g)$/,
+        loader: 'file-loader?limit=50000&name=assets/sounds/[name].[ext]'
       },
       {
         test: /\.tsx?$/,
