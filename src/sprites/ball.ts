@@ -1,5 +1,7 @@
 import * as PIXI from 'pixi.js';
 
+const INITIAL_VELOCITY = 10;
+
 export class Ball {
     public sprite: PIXI.Graphics = new PIXI.Graphics();
 
@@ -7,7 +9,7 @@ export class Ball {
     private readonly minAngle: number = 60;
     private readonly maxAngle: number = 120;
     private angle: number = Math.round((Math.random() * (this.maxAngle - this.minAngle) + this.minAngle) / 10) * 10;
-    private velocity: number = 10;
+    private velocity: number = INITIAL_VELOCITY;
 
     constructor() {
         this.sprite.beginFill(0xffffff);
@@ -35,5 +37,13 @@ export class Ball {
             this.sprite.y -= yAxisCalculation;
         }
 
+    }
+
+    public speedUp (): void {
+        this.velocity = 1.5 * INITIAL_VELOCITY;
+    }
+
+    public slowDown(): void {
+        this.velocity = INITIAL_VELOCITY;
     }
 }

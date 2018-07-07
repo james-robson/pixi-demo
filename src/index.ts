@@ -108,6 +108,8 @@ function startPlaying(): void {
 }
 
 function play (delta: number): void {
+    ball.calculateRebound(direction);
+    detectMovement();
     // Find the center points of each sprite
     const paddleCenterX = currentPaddle.sprite.x + currentPaddle.sprite.width / 2;
     const paddleCenterY = currentPaddle.sprite.y + currentPaddle.sprite.height / 2;
@@ -158,13 +160,24 @@ function play (delta: number): void {
                 break;
         }
 
+        if (!direction && (playerOneKeyboardDown.isDown || playerOneKeyboardUp.isDown)){
+            ball.speedUp();
+        } else if (direction && (playerTwoKeyboardDown.isDown || playerTwoKeyboardUp.isDown)){
+            ball.speedUp();
+        } else {
+            ball.slowDown();
+        }
+
         direction = !direction;
         currentPaddle = direction ? rightPaddle : leftPaddle;
+
+        return;
     }
 
     if (collisions.side(ball)) {
         sideHitSound.play();
         ball.invertAngle();
+        return;
     }
 
     if (collisions.goal(ball)) {
@@ -191,11 +204,8 @@ function play (delta: number): void {
             state = play;
             app.ticker.start();
         }, 3000);
+        return;
     }
-
-    ball.calculateRebound(direction);
-    detectMovement();
-
 }
 
 function detectMovement(): void {
