@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { Application, Container } from 'pixi.js';
+import * as WebFont from 'webfontloader';
 import * as collisions from './lib/collisionDetection';
 import { KeyListener } from './lib/keyListener';
 import './main.css';
@@ -7,8 +8,10 @@ import { Ball } from './sprites/ball';
 import { CenterLine } from './sprites/centerLine';
 import { Paddle } from './sprites/paddle';
 
+import './assets/loading.gif';
+
 let app: Application;
-let state = play;
+let state: ((delta: number) => void);
 let ball = new Ball();
 const leftPaddle = new Paddle(100);
 const rightPaddle = new Paddle(window.innerWidth - 100);
@@ -20,12 +23,12 @@ const playerTwoKeyboardUp = new KeyListener(38); // Up arrow
 const playerTwoKeyboardDown = new KeyListener(40); // Down arrow
 
 let playerOneScore = 0;
-const playerOneScoreText = new PIXI.Text('0', {fontFamily : 'Arial', fontSize: 72, fill : 0xffffff, align : 'center'});
+const playerOneScoreText = new PIXI.Text('0', {fontFamily : 'Press Start 2P', fontSize: 72, fill : 0xffffff, align : 'center'});
 playerOneScoreText.anchor.set(0.5, 0.5);
 playerOneScoreText.position.set(window.innerWidth / 4, 100);
 
 let playerTwoScore = 0;
-const playerTwoScoreText = new PIXI.Text('0', {fontFamily : 'Arial', fontSize: 72, fill : 0xffffff, align : 'center'});
+const playerTwoScoreText = new PIXI.Text('0', {fontFamily : 'Press Start 2P', fontSize: 72, fill : 0xffffff, align : 'center'});
 playerTwoScoreText.anchor.set(0.5, 0.5);
 playerTwoScoreText.position.set((window.innerWidth / 4) * 3, 100);
 
@@ -42,6 +45,12 @@ window.addEventListener('resize', () => {
 
 window.addEventListener('load', () => {
     bootstrap();
+    WebFont.load({
+        google: {
+            families: ['Press Start 2P']
+        },
+        active: startPlaying
+    });
 }, false);
 
 function createPixiApp(): PIXI.Application {
@@ -68,10 +77,6 @@ function bootstrap(): void {
     const view = app.view;
 
     document.body.appendChild(view);
-
-    addGraphicsToApp(app);
-
-    app.ticker.add((delta) => gameLoop(delta));
 }
 
 function gameLoop(delta: number): void {
@@ -81,6 +86,15 @@ function gameLoop(delta: number): void {
 function score (delta: number): void {
     // You can still move while the score animation plays
     detectMovement();
+}
+
+function startPlaying(): void {
+    state = play;
+    addGraphicsToApp(app);
+    const element = document.getElementById('loadingContainer');
+    element.classList.add('hidden');
+
+    app.ticker.add((delta) => gameLoop(delta));
 }
 
 function play (delta: number): void {
