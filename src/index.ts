@@ -160,12 +160,12 @@ function menu(): void {
 
 function play (delta: number): void {
     ball.calculateRebound(direction);
-    detectPlayerTwoMovement(delta);
+    detectPlayerOneMovement(delta);
 
     if (settings.mode === 'onePlayer') {
         moveCPUPaddle(delta);
     } else {
-        detectPlayerOneMovement(delta);
+        detectPlayerTwoMovement(delta);
     }
 
     // Find the center points of each sprite
@@ -271,7 +271,7 @@ function play (delta: number): void {
     }
 }
 
-function detectPlayerTwoMovement(delta: number): void {
+function detectPlayerOneMovement(delta: number): void {
     if (playerOneKeyboardUp.isDown && rightPaddle.sprite.y > 0) {
         rightPaddle.moveUp(delta);
     }
@@ -281,7 +281,7 @@ function detectPlayerTwoMovement(delta: number): void {
     }
 }
 
-function detectPlayerOneMovement(delta: number): void {
+function detectPlayerTwoMovement(delta: number): void {
     if (playerTwoKeyboardUp.isDown && leftPaddle.sprite.y > 0) {
         leftPaddle.moveUp(delta);
     }
@@ -291,18 +291,27 @@ function detectPlayerOneMovement(delta: number): void {
     }
 }
 
+const minDiff: number = 40;
+const maxDiff: number = 130;
+
 function moveCPUPaddle(delta: number): void {
+    const threshold: number = Math.round((Math.random() * (maxDiff - minDiff) + minDiff) / 10) * 10;
+
     const paddleCenter = leftPaddle.sprite.y - paddleHalfHeight;
     const ballCenter = ball.sprite.y - ballHalfHeight;
 
-    if ((paddleCenter < ballCenter) &&
-       ((leftPaddle.sprite.y + leftPaddle.sprite.height) < window.innerHeight) &&
-       !!Math.round(Math.random())) {
+    const diff = paddleCenter - ballCenter;
+    const isNegative = diff < 0 ? true : false;
+    const normalisedDiff = Math.abs(diff);
+
+    if ((isNegative && (normalisedDiff > threshold)) &&
+       ((leftPaddle.sprite.y + leftPaddle.sprite.height) < window.innerHeight)) {
         leftPaddle.moveDown(delta);
+        return;
     }
 
-    if ((paddleCenter > ballCenter) &&
-       !!Math.round(Math.random())) {
+    if ((normalisedDiff > threshold) &&
+       leftPaddle.sprite.y > 0) {
         leftPaddle.moveUp(delta);
     }
 }

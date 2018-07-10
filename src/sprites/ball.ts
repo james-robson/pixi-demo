@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 
-const INITIAL_VELOCITY = 10;
+const INITIAL_VELOCITY = 14;
 
 export class Ball {
     public sprite: PIXI.Graphics = new PIXI.Graphics();
