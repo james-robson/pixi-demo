@@ -295,10 +295,9 @@ function moveCPUPaddle(): void {
     const paddleCenter = leftPaddle.sprite.y - paddleHalfHeight;
     const ballCenter = ball.sprite.y - ballHalfHeight;
 
-    console.log(leftPaddle.sprite.y);
-
     if ((paddleCenter < ballCenter) &&
-       ((leftPaddle.sprite.y + leftPaddle.sprite.height) < window.innerHeight)) {
+       ((leftPaddle.sprite.y + leftPaddle.sprite.height) < window.innerHeight) &&
+       !!Math.round(Math.random())) {
         leftPaddle.moveDown();
     }
 
