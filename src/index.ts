@@ -21,26 +21,31 @@ const paddleHitSound = PIXI.sound.Sound.from('./assets/sounds/beeep.ogg');
 const scoreSound = PIXI.sound.Sound.from('./assets/sounds/peeeeeep.ogg');
 
 let app: Application;
+let settings: IGameSettings;
 let state: ((delta: number) => void);
 let ball = new Ball();
 const leftPaddle = new Paddle(100);
 const rightPaddle = new Paddle(window.innerWidth - 100);
+
+const paddleHalfHeight = leftPaddle.sprite.y / 2;
+const ballHalfHeight = ball.sprite.y / 2;
+
 let currentPaddle = rightPaddle;
 
-const playerOneKeyboardUp = new KeyListener(87); // W key
-const playerOneKeyboardDown = new KeyListener(83); // S key
-const playerTwoKeyboardUp = new KeyListener(38); // Up arrow
-const playerTwoKeyboardDown = new KeyListener(40); // Down arrow
-
-let playerOneScore = 0;
-const playerOneScoreText = new PIXI.Text('0', {fontFamily : 'Press Start 2P', fontSize: 72, fill : 0xffffff, align : 'center'});
-playerOneScoreText.anchor.set(0.5, 0.5);
-playerOneScoreText.position.set(window.innerWidth / 4, 100);
+const playerTwoKeyboardUp = new KeyListener(87); // W key
+const playerTwoKeyboardDown = new KeyListener(83); // S key
+const playerOneKeyboardUp = new KeyListener(38); // Up arrow
+const playerOneKeyboardDown = new KeyListener(40); // Down arrow
 
 let playerTwoScore = 0;
 const playerTwoScoreText = new PIXI.Text('0', {fontFamily : 'Press Start 2P', fontSize: 72, fill : 0xffffff, align : 'center'});
 playerTwoScoreText.anchor.set(0.5, 0.5);
-playerTwoScoreText.position.set((window.innerWidth / 4) * 3, 100);
+playerTwoScoreText.position.set(window.innerWidth / 4, 100);
+
+let playerOneScore = 0;
+const playerOneScoreText = new PIXI.Text('0', {fontFamily : 'Press Start 2P', fontSize: 72, fill : 0xffffff, align : 'center'});
+playerOneScoreText.anchor.set(0.5, 0.5);
+playerOneScoreText.position.set((window.innerWidth / 4) * 3, 100);
 
 let direction: boolean = true;
 
@@ -78,8 +83,8 @@ function addGraphicsToApp(appToUpdate: PIXI.Application): void {
 
     appToUpdate.stage.addChild(ball.sprite);
 
-    app.stage.addChild(playerOneScoreText);
     app.stage.addChild(playerTwoScoreText);
+    app.stage.addChild(playerOneScoreText);
 }
 
 function bootstrap(): void {
@@ -95,19 +100,23 @@ function gameLoop(delta: number): void {
 
 function score (delta: number): void {
     // You can still move while the score animation plays
-    detectMovement();
+    detectPlayerOneMovement();
+    if (settings.mode === 'twoPlayer') {
+        detectPlayerTwoMovement();
+    }
 }
 
 function win (): void {
-    const winningPlayer = (playerOneScore === 10) ? 'ONE' : 'TWO';
+    const winningPlayer = (playerTwoScore === 10) ? 'ONE' : 'TWO';
     const winText = new PIXI.Text(`PLAYER ${winningPlayer} WINS!`, {fontFamily : 'Press Start 2P', fontSize: 52, fill : 0xffffff, align : 'center'});
     winText.anchor.set(0.5, 0.5);
     winText.position.set(window.innerWidth / 2, window.innerHeight / 2);
     app.stage.addChild(winText);
 }
 
-function startPlaying(settings: IGameSettings): void {
+function startPlaying(selectedSettings: IGameSettings): void {
     state = play;
+    settings = selectedSettings;
     addGraphicsToApp(app);
     const element = document.getElementById('loadingContainer');
     element.classList.add('hidden');
@@ -127,6 +136,10 @@ function menu(): void {
     menuContainer.width = window.innerWidth;
     onePlayerText.interactive = true;
     onePlayerText.buttonMode = true;
+    onePlayerText.on('click', (event: Event) => {
+        app.stage.removeChild(menuContainer);
+        startPlaying({mode: 'onePlayer'});
+     });
     twoPlayerText.interactive = true;
     twoPlayerText.buttonMode = true;
     twoPlayerText.on('click', (event: Event) => {
@@ -147,7 +160,14 @@ function menu(): void {
 
 function play (delta: number): void {
     ball.calculateRebound(direction);
-    detectMovement();
+    detectPlayerTwoMovement();
+
+    if (settings.mode === 'onePlayer') {
+        moveCPUPaddle();
+    } else {
+        detectPlayerOneMovement();
+    }
+
     // Find the center points of each sprite
     const paddleCenterX = currentPaddle.sprite.x + currentPaddle.sprite.width / 2;
     const paddleCenterY = currentPaddle.sprite.y + currentPaddle.sprite.height / 2;
@@ -178,7 +198,7 @@ function play (delta: number): void {
                 break;
 
             case vy < 20 && vy > -20:
-                ball.setAngle(90);
+                ball.setAngle(89);
                 break;
 
             case vy < -20:
@@ -194,13 +214,13 @@ function play (delta: number): void {
                 break;
 
             default:
-                ball.setAngle(90);
+                ball.setAngle(89);
                 break;
         }
 
-        if (!direction && (playerOneKeyboardDown.isDown || playerOneKeyboardUp.isDown)){
+        if (!direction && (playerTwoKeyboardDown.isDown || playerTwoKeyboardUp.isDown)){
             ball.speedUp();
-        } else if (direction && (playerTwoKeyboardDown.isDown || playerTwoKeyboardUp.isDown)){
+        } else if (direction && (playerOneKeyboardDown.isDown || playerOneKeyboardUp.isDown)){
             ball.speedUp();
         } else {
             ball.slowDown();
@@ -221,14 +241,14 @@ function play (delta: number): void {
     if (collisions.goal(ball)) {
         scoreSound.play();
         if (direction) {
-            playerOneScore++;
-            playerOneScoreText.text = playerOneScore.toString();
-        } else {
             playerTwoScore++;
             playerTwoScoreText.text = playerTwoScore.toString();
+        } else {
+            playerOneScore++;
+            playerOneScoreText.text = playerOneScore.toString();
         }
 
-        if (playerOneScore === 10 || playerTwoScore === 10) {
+        if (playerTwoScore === 10 || playerOneScore === 10) {
             state = win;
             return;
         }
@@ -251,21 +271,39 @@ function play (delta: number): void {
     }
 }
 
-function detectMovement(): void {
-    if (playerOneKeyboardUp.isDown && leftPaddle.sprite.y > 0) {
-        leftPaddle.moveUp();
-    }
-
-    if (playerOneKeyboardDown.isDown && (leftPaddle.sprite.y + leftPaddle.sprite.height) < window.innerHeight) {
-        leftPaddle.moveDown();
-    }
-
-    if (playerTwoKeyboardUp.isDown && rightPaddle.sprite.y > 0) {
+function detectPlayerTwoMovement(): void {
+    if (playerOneKeyboardUp.isDown && rightPaddle.sprite.y > 0) {
         rightPaddle.moveUp();
     }
 
-    if (playerTwoKeyboardDown.isDown && (rightPaddle.sprite.y + rightPaddle.sprite.height) < window.innerHeight) {
+    if (playerOneKeyboardDown.isDown && (rightPaddle.sprite.y + rightPaddle.sprite.height) < window.innerHeight) {
         rightPaddle.moveDown();
+    }
+}
+
+function detectPlayerOneMovement(): void {
+    if (playerTwoKeyboardUp.isDown && leftPaddle.sprite.y > 0) {
+        leftPaddle.moveUp();
+    }
+
+    if (playerTwoKeyboardDown.isDown && (leftPaddle.sprite.y + leftPaddle.sprite.height) < window.innerHeight) {
+        leftPaddle.moveDown();
+    }
+}
+
+function moveCPUPaddle(): void {
+    const paddleCenter = leftPaddle.sprite.y - paddleHalfHeight;
+    const ballCenter = ball.sprite.y - ballHalfHeight;
+
+    console.log(leftPaddle.sprite.y);
+
+    if ((paddleCenter < ballCenter) &&
+       ((leftPaddle.sprite.y + leftPaddle.sprite.height) < window.innerHeight)) {
+        leftPaddle.moveDown();
+    }
+
+    if (paddleCenter > ballCenter) {
+        leftPaddle.moveUp();
     }
 }
 
