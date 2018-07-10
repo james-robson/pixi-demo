@@ -10,11 +10,11 @@ export class Paddle {
         this.sprite.y = window.innerHeight / 2 - (this.sprite.height / 2);
     }
 
-    public moveUp(): void {
-        this.sprite.y -= 10;
+    public moveUp(delta: number): void {
+        this.sprite.y -= (10 + delta);
     }
 
-    public moveDown(): void {
-        this.sprite.y += 10;
+    public moveDown(delta: number): void {
+        this.sprite.y += (10 + delta);
     }
 }

@@ -100,9 +100,9 @@ function gameLoop(delta: number): void {
 
 function score (delta: number): void {
     // You can still move while the score animation plays
-    detectPlayerOneMovement();
+    detectPlayerOneMovement(delta);
     if (settings.mode === 'twoPlayer') {
-        detectPlayerTwoMovement();
+        detectPlayerTwoMovement(delta);
     }
 }
 
@@ -160,12 +160,12 @@ function menu(): void {
 
 function play (delta: number): void {
     ball.calculateRebound(direction);
-    detectPlayerTwoMovement();
+    detectPlayerTwoMovement(delta);
 
     if (settings.mode === 'onePlayer') {
-        moveCPUPaddle();
+        moveCPUPaddle(delta);
     } else {
-        detectPlayerOneMovement();
+        detectPlayerOneMovement(delta);
     }
 
     // Find the center points of each sprite
@@ -271,38 +271,39 @@ function play (delta: number): void {
     }
 }
 
-function detectPlayerTwoMovement(): void {
+function detectPlayerTwoMovement(delta: number): void {
     if (playerOneKeyboardUp.isDown && rightPaddle.sprite.y > 0) {
-        rightPaddle.moveUp();
+        rightPaddle.moveUp(delta);
     }
 
     if (playerOneKeyboardDown.isDown && (rightPaddle.sprite.y + rightPaddle.sprite.height) < window.innerHeight) {
-        rightPaddle.moveDown();
+        rightPaddle.moveDown(delta);
     }
 }
 
-function detectPlayerOneMovement(): void {
+function detectPlayerOneMovement(delta: number): void {
     if (playerTwoKeyboardUp.isDown && leftPaddle.sprite.y > 0) {
-        leftPaddle.moveUp();
+        leftPaddle.moveUp(delta);
     }
 
     if (playerTwoKeyboardDown.isDown && (leftPaddle.sprite.y + leftPaddle.sprite.height) < window.innerHeight) {
-        leftPaddle.moveDown();
+        leftPaddle.moveDown(delta);
     }
 }
 
-function moveCPUPaddle(): void {
+function moveCPUPaddle(delta: number): void {
     const paddleCenter = leftPaddle.sprite.y - paddleHalfHeight;
     const ballCenter = ball.sprite.y - ballHalfHeight;
 
     if ((paddleCenter < ballCenter) &&
        ((leftPaddle.sprite.y + leftPaddle.sprite.height) < window.innerHeight) &&
        !!Math.round(Math.random())) {
-        leftPaddle.moveDown();
+        leftPaddle.moveDown(delta);
     }
 
-    if (paddleCenter > ballCenter) {
-        leftPaddle.moveUp();
+    if ((paddleCenter > ballCenter) &&
+       !!Math.round(Math.random())) {
+        leftPaddle.moveUp(delta);
     }
 }
 
