@@ -10,6 +10,7 @@ import { Ball } from './sprites/ball';
 import { CenterLine } from './sprites/centerLine';
 import { menuContainer, renderMenu } from './sprites/menu';
 import { createPaddles, leftPaddle, rightPaddle } from './sprites/paddle';
+import { renderScores, updateScores } from './sprites/score';
 
 import './assets/images/loading.gif';
 
@@ -31,14 +32,7 @@ const playerOneKeyboardUp = new KeyListener(38); // Up arrow
 const playerOneKeyboardDown = new KeyListener(40); // Down arrow
 
 let playerTwoScore = 0;
-const playerTwoScoreText = new PIXI.Text('0', {fontFamily : 'Press Start 2P', fontSize: 72, fill : 0xffffff, align : 'center'});
-playerTwoScoreText.anchor.set(0.5, 0.5);
-playerTwoScoreText.position.set(window.innerWidth / 4, 100);
-
 let playerOneScore = 0;
-const playerOneScoreText = new PIXI.Text('0', {fontFamily : 'Press Start 2P', fontSize: 72, fill : 0xffffff, align : 'center'});
-playerOneScoreText.anchor.set(0.5, 0.5);
-playerOneScoreText.position.set((window.innerWidth / 4) * 3, 100);
 
 let direction: boolean = true;
 
@@ -63,9 +57,7 @@ function addGraphicsToApp(): void {
     });
 
     app.stage.addChild(ball.sprite);
-
-    app.stage.addChild(playerTwoScoreText);
-    app.stage.addChild(playerOneScoreText);
+    renderScores();
 }
 
 function bootstrap(): void {
@@ -210,10 +202,10 @@ function play (delta: number): void {
         scoreSound.play();
         if (direction) {
             playerTwoScore++;
-            playerTwoScoreText.text = playerTwoScore.toString();
+            updateScores(playerOneScore, playerTwoScore);
         } else {
             playerOneScore++;
-            playerOneScoreText.text = playerOneScore.toString();
+            updateScores(playerOneScore, playerTwoScore);
         }
 
         if (playerTwoScore === 10 || playerOneScore === 10) {
