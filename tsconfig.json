@@ -5,9 +5,15 @@
     "noImplicitAny": true,
     "removeComments": true,
     "module": "es6",
+    "moduleResolution": "node",
     "target": "es5",
-    "jsx": "react",
-    "allowJs": true
+    "allowJs": true,
+    "baseUrl": "./",
+    "paths": {
+      "lib/*": [
+          "src/lib/*"
+      ]
+    }
   }
 }
 

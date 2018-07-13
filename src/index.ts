@@ -1,8 +1,8 @@
 import * as PIXI from 'pixi.js';
 
+import { app, createApplication } from 'lib/app';
 import 'pixi-sound';
-import { Application } from 'pixi.js';
-import * as WebFont from 'webfontloader';
+import * as WebFont from '../node_modules/@types/webfontloader/index';
 import * as collisions from './lib/collisionDetection';
 import { KeyListener } from './lib/keyListener';
 import './main.css';
@@ -20,7 +20,6 @@ const sideHitSound = PIXI.sound.Sound.from('./assets/sounds/plop.ogg');
 const paddleHitSound = PIXI.sound.Sound.from('./assets/sounds/beeep.ogg');
 const scoreSound = PIXI.sound.Sound.from('./assets/sounds/peeeeeep.ogg');
 
-let app: Application;
 let settings: IGameSettings;
 let state: ((delta: number) => void);
 let ball = new Ball();
@@ -68,10 +67,6 @@ window.addEventListener('load', () => {
     });
 }, false);
 
-function createPixiApp(): PIXI.Application {
-    return new PIXI.Application({ width: window.innerWidth, height: window.innerHeight });
-}
-
 function addGraphicsToApp(appToUpdate: PIXI.Application): void {
     appToUpdate.stage.addChild(leftPaddle.sprite);
     appToUpdate.stage.addChild(rightPaddle.sprite);
@@ -88,7 +83,7 @@ function addGraphicsToApp(appToUpdate: PIXI.Application): void {
 }
 
 function bootstrap(): void {
-    app = createPixiApp();
+    createApplication();
     const view = app.view;
 
     document.body.appendChild(view);
