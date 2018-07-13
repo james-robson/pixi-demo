@@ -140,8 +140,8 @@ function play (delta: number): void {
     // Find the center points of each sprite
     const paddleCenterX = currentPaddle.sprite.x + currentPaddle.getHalfWidth();
     const paddleCenterY = currentPaddle.sprite.y + currentPaddle.getHalfHeight();
-    const ballCenterX = ball.sprite.x + ball.sprite.width / 2;
-    const ballCenterY = ball.sprite.y + ball.sprite.height / 2;
+    const ballCenterX = ball.sprite.x + ball.getHalfHeight();
+    const ballCenterY = ball.sprite.y + ball.getHalfHeight();
 
     // Calculate the distance vector between the sprites
     const vx = paddleCenterX - ballCenterX;
