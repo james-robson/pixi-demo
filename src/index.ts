@@ -1,14 +1,14 @@
 import * as PIXI from 'pixi.js';
 
-import { app, createApplication } from 'lib/app';
 import 'pixi-sound';
-import * as WebFont from '../node_modules/@types/webfontloader/index';
+import * as WebFont from 'webfontloader';
+import { app, createApplication } from './lib/app';
 import * as collisions from './lib/collisionDetection';
 import { KeyListener } from './lib/keyListener';
 import './main.css';
 import { Ball } from './sprites/ball';
 import { CenterLine } from './sprites/centerLine';
-import { Paddle } from './sprites/paddle';
+import { createPaddles, leftPaddle, rightPaddle } from './sprites/paddle';
 
 import './assets/images/loading.gif';
 
@@ -23,13 +23,6 @@ const scoreSound = PIXI.sound.Sound.from('./assets/sounds/peeeeeep.ogg');
 let settings: IGameSettings;
 let state: ((delta: number) => void);
 let ball = new Ball();
-const leftPaddle = new Paddle(100);
-const rightPaddle = new Paddle(window.innerWidth - 100);
-
-const paddleHalfHeight = leftPaddle.sprite.y / 2;
-const ballHalfHeight = ball.sprite.y / 2;
-
-let currentPaddle = rightPaddle;
 
 const playerTwoKeyboardUp = new KeyListener(87); // W key
 const playerTwoKeyboardDown = new KeyListener(83); // S key
@@ -48,15 +41,6 @@ playerOneScoreText.position.set((window.innerWidth / 4) * 3, 100);
 
 let direction: boolean = true;
 
-window.addEventListener('resize', () => {
-    app.renderer.resize(window.innerWidth, window.innerHeight);
-    // Remove all the old child elements
-    while (app.stage.children[0]) {
-        app.stage.removeChild(app.stage.children[0]);
-    }
-    addGraphicsToApp(app);
-});
-
 window.addEventListener('load', () => {
     bootstrap();
     WebFont.load({
@@ -67,16 +51,17 @@ window.addEventListener('load', () => {
     });
 }, false);
 
-function addGraphicsToApp(appToUpdate: PIXI.Application): void {
-    appToUpdate.stage.addChild(leftPaddle.sprite);
-    appToUpdate.stage.addChild(rightPaddle.sprite);
+function addGraphicsToApp(): void {
+    createPaddles(100, window.innerWidth - 100);
+    app.stage.addChild(leftPaddle.sprite);
+    app.stage.addChild(rightPaddle.sprite);
 
     const centerLines = new CenterLine();
     centerLines.sprites.forEach((line: PIXI.Graphics) => {
-        appToUpdate.stage.addChild(line);
+        app.stage.addChild(line);
     });
 
-    appToUpdate.stage.addChild(ball.sprite);
+    app.stage.addChild(ball.sprite);
 
     app.stage.addChild(playerTwoScoreText);
     app.stage.addChild(playerOneScoreText);
@@ -112,7 +97,7 @@ function win (): void {
 function startPlaying(selectedSettings: IGameSettings): void {
     state = play;
     settings = selectedSettings;
-    addGraphicsToApp(app);
+    addGraphicsToApp();
     const element = document.getElementById('loadingContainer');
     element.classList.add('hidden');
 
@@ -163,6 +148,8 @@ function play (delta: number): void {
         detectPlayerTwoMovement(delta);
     }
 
+    const currentPaddle = direction ? rightPaddle : leftPaddle;
+
     // Find the center points of each sprite
     const paddleCenterX = currentPaddle.sprite.x + currentPaddle.sprite.width / 2;
     const paddleCenterY = currentPaddle.sprite.y + currentPaddle.sprite.height / 2;
@@ -174,7 +161,7 @@ function play (delta: number): void {
     const vy = paddleCenterY - ballCenterY;
 
     // PERF: It should be easy to work out if a ball is near either a paddle, side or goal without testing all three
-    if (collisions.paddle(currentPaddle, ball, vx, vy)) {
+    if (collisions.paddle(ball, vx, vy)) {
         paddleHitSound.play();
 
         // Set the ball return angle
@@ -222,7 +209,6 @@ function play (delta: number): void {
         }
 
         direction = !direction;
-        currentPaddle = direction ? rightPaddle : leftPaddle;
 
         return;
     }
@@ -292,8 +278,8 @@ const maxDiff: number = 130;
 function moveCPUPaddle(delta: number): void {
     const threshold: number = Math.round((Math.random() * (maxDiff - minDiff) + minDiff) / 10) * 10;
 
-    const paddleCenter = leftPaddle.sprite.y - paddleHalfHeight;
-    const ballCenter = ball.sprite.y - ballHalfHeight;
+    const paddleCenter = leftPaddle.sprite.y - leftPaddle.getHalfHeight();
+    const ballCenter = ball.sprite.y - ball.getHalfHeight();
 
     const diff = paddleCenter - ballCenter;
     const isNegative = diff < 0 ? true : false;

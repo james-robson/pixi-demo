@@ -8,12 +8,7 @@
     "moduleResolution": "node",
     "target": "es5",
     "allowJs": true,
-    "baseUrl": "./",
-    "paths": {
-      "lib/*": [
-          "src/lib/*"
-      ]
-    }
+    "baseUrl": "./"
   }
 }
 

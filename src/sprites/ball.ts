@@ -8,6 +8,8 @@ export class Ball {
     private readonly radianMultiplier: number = Math.PI / 180;
     private readonly minAngle: number = 60;
     private readonly maxAngle: number = 120;
+    private readonly ballHeight: number = 30;
+    private ballHalfHeight: number = this.ballHeight / 2;
     private angle: number = Math.round((Math.random() * (this.maxAngle - this.minAngle) + this.minAngle) / 10) * 10;
     private velocity: number = INITIAL_VELOCITY;
 
@@ -45,5 +47,9 @@ export class Ball {
 
     public slowDown(): void {
         this.velocity = INITIAL_VELOCITY;
+    }
+
+    public getHalfHeight(): number {
+        return this.ballHalfHeight;
     }
 }

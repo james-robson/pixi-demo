@@ -1,8 +1,7 @@
-import { Application } from 'pixi.js';
 import { Ball } from '../sprites/ball';
-import { Paddle } from '../sprites/paddle';
+import { leftPaddle } from '../sprites/paddle';
 
-export function paddle(currentPaddle: Paddle, currentBall: Ball, vx: number, vy: number): boolean {
+export function paddle(currentBall: Ball, vx: number, vy: number): boolean {
 
     // Define the variables we'll need to calculate
     let hit, combinedHalfWidths, combinedHalfHeights;
@@ -11,8 +10,8 @@ export function paddle(currentPaddle: Paddle, currentBall: Ball, vx: number, vy:
     hit = false;
 
     // Find the half-widths and half-heights of each sprite
-    const paddleHalfWidth = currentPaddle.sprite.width / 2;
-    const paddleHalfHeight = currentPaddle.sprite.height / 2;
+    const paddleHalfWidth = leftPaddle.getHalfWidth();
+    const paddleHalfHeight = leftPaddle.getHalfHeight();
     const ballHalfWidth = currentBall.sprite.width / 2;
     const ballHalfHeight = currentBall.sprite.height / 2;
 
