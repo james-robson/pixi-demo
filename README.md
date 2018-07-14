@@ -17,7 +17,7 @@ npm install
 Use the following command to start the development server:
 
 ```
-npm run start:dev
+npm run start
 ```
 
 The dev server should be running on port `8080`.
