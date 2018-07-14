@@ -1,6 +1,6 @@
 # pixi-demo
 
-Getting started repo for the basics of [Pixi](http://www.pixijs.com/).
+Getting started repo for the basics of [PixiJS](http://www.pixijs.com/).
 
 ## Prerequisites
 
@@ -22,13 +22,8 @@ npm run start
 
 The dev server should be running on port `8080`.
 
-## TODO
+# TODO
 
-* Make some 'paddle' and 'ball' shapes/assets
-* Assets can be moved with keys
-* Ball with basic random path
-* Collision detection?
-* Contact area for scoring
-* Start of play
-* Score display
+* Speed up ball gradually during play
+* Different colour schemes would be nice
 
