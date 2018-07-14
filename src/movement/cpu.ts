@@ -1,13 +1,13 @@
 import { ball, leftPaddle } from 'sprites';
 
-const minDiff: number = 1;
-const maxDiff: number = 30;
+const minDiff: number = 30;
+const maxDiff: number = 90;
 
 export function moveCPUPaddle(delta: number): void {
     const threshold: number = Math.round((Math.random() * (maxDiff - minDiff) + minDiff) / 10) * 10;
 
-    const paddleCenter = leftPaddle.sprite.y - leftPaddle.getHalfHeight();
-    const ballCenter = ball.sprite.y - ball.getHalfHeight();
+    const paddleCenter = leftPaddle.sprite.y + leftPaddle.getHalfHeight();
+    const ballCenter = ball.sprite.y + ball.getHalfHeight();
 
     const diff = paddleCenter - ballCenter;
     const isNegative = diff < 0 ? true : false;
