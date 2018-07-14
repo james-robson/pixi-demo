@@ -9,8 +9,8 @@ import './main.css';
 import { Ball } from './sprites/ball';
 import { CenterLine } from './sprites/centerLine';
 import { menuContainer, renderMenu } from './sprites/menu';
-import { createPaddles, leftPaddle, rightPaddle } from './sprites/paddle';
-import { renderScores, updateScores } from './sprites/score';
+import { createPaddles, leftPaddle, rightPaddle } from './sprites/paddles';
+import { Scores } from './sprites/scores';
 
 import './assets/images/loading.gif';
 
@@ -25,14 +25,12 @@ const scoreSound = PIXI.sound.Sound.from('./assets/sounds/peeeeeep.ogg');
 let settings: IGameSettings;
 let state: ((delta: number) => void);
 let ball = new Ball();
+let scores: Scores;
 
 const playerTwoKeyboardUp = new KeyListener(87); // W key
 const playerTwoKeyboardDown = new KeyListener(83); // S key
 const playerOneKeyboardUp = new KeyListener(38); // Up arrow
 const playerOneKeyboardDown = new KeyListener(40); // Down arrow
-
-let playerTwoScore = 0;
-let playerOneScore = 0;
 
 let direction: boolean = true;
 
@@ -57,7 +55,7 @@ function addGraphicsToApp(): void {
     });
 
     app.stage.addChild(ball.sprite);
-    renderScores();
+    scores = new Scores();
 }
 
 function bootstrap(): void {
@@ -80,7 +78,7 @@ function score (delta: number): void {
 }
 
 function win (): void {
-    const winningPlayer = (playerTwoScore === 10) ? 'ONE' : 'TWO';
+    const winningPlayer = (scores.getScore('playerOne') === 10) ? 'ONE' : 'TWO';
     const winText = new PIXI.Text(`PLAYER ${winningPlayer} WINS!`, {fontFamily : 'Press Start 2P', fontSize: 52, fill : 0xffffff, align : 'center'});
     winText.anchor.set(0.5, 0.5);
     winText.position.set(window.innerWidth / 2, window.innerHeight / 2);
@@ -201,14 +199,12 @@ function play (delta: number): void {
     if (collisions.goal(ball)) {
         scoreSound.play();
         if (direction) {
-            playerTwoScore++;
-            updateScores(playerOneScore, playerTwoScore);
+            scores.incrementScore('playerOne');
         } else {
-            playerOneScore++;
-            updateScores(playerOneScore, playerTwoScore);
+            scores.incrementScore('playerTwo');
         }
 
-        if (playerTwoScore === 10 || playerOneScore === 10) {
+        if (scores.getScore('playerOne') === 10 || scores.getScore('playerTwo') === 10) {
             state = win;
             return;
         }

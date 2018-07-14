@@ -1,5 +1,5 @@
 import { Ball } from '../sprites/ball';
-import { leftPaddle } from '../sprites/paddle';
+import { leftPaddle } from '../sprites/paddles';
 
 export function paddle(currentBall: Ball, vx: number, vy: number): boolean {
 
