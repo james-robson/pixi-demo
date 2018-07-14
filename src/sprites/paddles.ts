@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+import { app } from '../lib/app';
 
 export let leftPaddle: Paddle;
 export let rightPaddle: Paddle;
@@ -37,4 +38,6 @@ export class Paddle {
 export function createPaddles(paddleOneX: number, paddleTwoX: number): void {
     leftPaddle = new Paddle(paddleOneX);
     rightPaddle = new Paddle(paddleTwoX);
+    app.stage.addChild(leftPaddle.sprite);
+    app.stage.addChild(rightPaddle.sprite);
 }

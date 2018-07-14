@@ -1,5 +1,7 @@
 import { app } from '../lib/app';
 
+export let scores: Scores;
+
 const textSettings = {fontFamily : 'Press Start 2P', fontSize: 72, fill : 0xffffff, align : 'center'};
 
 export class Scores {
@@ -42,6 +44,10 @@ export class Scores {
             return this.playerTwoScore;
         }
     }
+}
+
+export function createScores(): void {
+    scores = new Scores();
 }
 
 export type IPlayer = 'playerOne' | 'playerTwo';

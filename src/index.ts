@@ -10,7 +10,8 @@ import { Ball } from './sprites/ball';
 import { CenterLine } from './sprites/centerLine';
 import { menuContainer, renderMenu } from './sprites/menu';
 import { createPaddles, leftPaddle, rightPaddle } from './sprites/paddles';
-import { Scores } from './sprites/scores';
+import { createScores, scores } from './sprites/scores';
+import { win } from './states/win';
 
 import './assets/images/loading.gif';
 
@@ -25,7 +26,6 @@ const scoreSound = PIXI.sound.Sound.from('./assets/sounds/peeeeeep.ogg');
 let settings: IGameSettings;
 let state: ((delta: number) => void);
 let ball = new Ball();
-let scores: Scores;
 
 const playerTwoKeyboardUp = new KeyListener(87); // W key
 const playerTwoKeyboardDown = new KeyListener(83); // S key
@@ -46,8 +46,6 @@ window.addEventListener('load', () => {
 
 function addGraphicsToApp(): void {
     createPaddles(100, window.innerWidth - 100);
-    app.stage.addChild(leftPaddle.sprite);
-    app.stage.addChild(rightPaddle.sprite);
 
     const centerLines = new CenterLine();
     centerLines.sprites.forEach((line: PIXI.Graphics) => {
@@ -55,7 +53,7 @@ function addGraphicsToApp(): void {
     });
 
     app.stage.addChild(ball.sprite);
-    scores = new Scores();
+    createScores();
 }
 
 function bootstrap(): void {
@@ -75,14 +73,6 @@ function score (delta: number): void {
     if (settings.mode === 'twoPlayer') {
         detectPlayerTwoMovement(delta);
     }
-}
-
-function win (): void {
-    const winningPlayer = (scores.getScore('playerOne') === 10) ? 'ONE' : 'TWO';
-    const winText = new PIXI.Text(`PLAYER ${winningPlayer} WINS!`, {fontFamily : 'Press Start 2P', fontSize: 52, fill : 0xffffff, align : 'center'});
-    winText.anchor.set(0.5, 0.5);
-    winText.position.set(window.innerWidth / 2, window.innerHeight / 2);
-    app.stage.addChild(winText);
 }
 
 function startPlaying(selectedSettings: IGameSettings): void {
