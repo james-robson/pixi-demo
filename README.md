@@ -1,4 +1,4 @@
-# pixi-demo
+# pixijs-demo
 
 Getting started repo for the basics of [PixiJS](http://www.pixijs.com/).
 
@@ -37,7 +37,7 @@ hosted on GitHub Pages (see below).
 
 As the build output is written to a `docs` directory, the game is playable by visiting:
 
-[https://james-robson.github.io/pixi-demo/](https://james-robson.github.io/pixi-demo/)
+[https://james-robson.github.io/pixijs-demo/](https://james-robson.github.io/pixijs-demo/)
 
 Any subsequent pushes/merges to the master branch `docs` directory will redeploy the new build assets.
 
