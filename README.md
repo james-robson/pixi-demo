@@ -2,6 +2,12 @@
 
 Getting started repo for the basics of [PixiJS](http://www.pixijs.com/).
 
+## How to play
+
+1 Player: Up and down arrow keys move the paddle on the right.
+
+2 Player: As above but you can move the left paddle with the 'w' and 's' keys. 
+
 ## Prerequisites
 
 You will need `node` installed. This project was tested on `node` version `v6.4.0`
