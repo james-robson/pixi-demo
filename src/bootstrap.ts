@@ -1,13 +1,8 @@
+import { app, createApplication } from 'app';
+import { IGameSettings, updateSettings } from 'settings';
+import { createBall, createCenterLine, createPaddles, createScores, menuContainer, renderMenu } from 'sprites';
+import { currentState, play, setState } from 'states';
 import * as WebFont from 'webfontloader';
-import { app, createApplication } from './lib/app';
-import { IGameSettings, updateSettings } from './lib/settings';
-import { createBall } from './sprites/ball';
-import { createCenterLine } from './sprites/centerLine';
-import { menuContainer, renderMenu } from './sprites/menu';
-import { createPaddles } from './sprites/paddles';
-import { createScores } from './sprites/scores';
-import { currentState, setState } from './states/current';
-import { play } from './states/play';
 
 export function bootstrap(): void {
     createApplication();

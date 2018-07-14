@@ -15,7 +15,7 @@ module.exports = {
       },
       {
         test: /\.tsx?$/,
-        use: 'ts-loader',
+        use: 'awesome-typescript-loader',
         exclude: /node_modules/
       },
       {
@@ -25,7 +25,11 @@ module.exports = {
     ]
   },
   resolve: {
-    extensions: [ '.tsx', '.ts', '.js' ]
+    extensions: [ '.tsx', '.ts', '.js' ],
+    modules: [
+      path.resolve('./src'),
+      'node_modules'
+    ]
   },
   output: {
     filename: 'bundle.js',

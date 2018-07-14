@@ -1,17 +1,12 @@
-import { app } from '../lib/app';
-import * as collisions from '../lib/collisionDetection';
-import { playerOneKeyboardDown, playerOneKeyboardUp, playerTwoKeyboardDown, playerTwoKeyboardUp } from '../lib/keyListener';
-import { moveCPUPaddle } from '../lib/movement/cpu';
-import { detectPlayerOneMovement, detectPlayerTwoMovement } from '../lib/movement/player';
-import { settings } from '../lib/settings';
-import { ball, createBall } from '../sprites/ball';
-import { leftPaddle, rightPaddle } from '../sprites/paddles';
-import { scores } from '../sprites/scores';
-import { setState } from './current';
-import { score } from './score';
-import { win } from './win';
+import { app } from 'app';
+import { detectPlayerOneMovement, detectPlayerTwoMovement, moveCPUPaddle, playerOneKeyboardDown, playerOneKeyboardUp,
+playerTwoKeyboardDown, playerTwoKeyboardUp } from 'movement';
+import * as collisions from 'movement/collisionDetection';
+import { settings } from 'settings';
+import { ball, createBall, leftPaddle, rightPaddle, scores } from 'sprites';
+import { score, setState, win} from 'states';
 
-import { paddleHitSound, scoreSound, sideHitSound } from '../sounds/sounds';
+import { paddleHitSound, scoreSound, sideHitSound } from 'sounds/sounds';
 
 export function play (delta: number): void {
     ball.calculateRebound();

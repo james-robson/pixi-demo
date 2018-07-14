@@ -1,5 +1,5 @@
-import { leftPaddle, rightPaddle } from '../../sprites/paddles';
-import { playerOneKeyboardDown, playerOneKeyboardUp, playerTwoKeyboardDown, playerTwoKeyboardUp } from '../keyListener';
+import { playerOneKeyboardDown, playerOneKeyboardUp, playerTwoKeyboardDown, playerTwoKeyboardUp } from 'movement';
+import { leftPaddle, rightPaddle } from 'sprites';
 
 export function detectPlayerOneMovement(delta: number): void {
     if (playerOneKeyboardUp.isDown && rightPaddle.sprite.y > 0) {

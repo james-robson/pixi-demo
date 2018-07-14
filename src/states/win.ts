@@ -1,5 +1,5 @@
-import { app } from '../lib/app';
-import { scores } from '../sprites/scores';
+import { app } from 'app';
+import { scores } from 'sprites';
 
 export function win (): void {
     const winningPlayer = (scores.getScore('playerOne') === 10) ? 'ONE' : 'TWO';

@@ -1,5 +1,4 @@
-import { ball } from '../../sprites/ball';
-import { leftPaddle } from '../../sprites/paddles';
+import { ball, leftPaddle } from 'sprites';
 
 const minDiff: number = 1;
 const maxDiff: number = 30;

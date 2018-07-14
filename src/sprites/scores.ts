@@ -1,4 +1,4 @@
-import { app } from '../lib/app';
+import { app } from 'app';
 
 export let scores: Scores;
 

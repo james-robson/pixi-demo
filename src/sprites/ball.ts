@@ -1,5 +1,5 @@
+import { app } from 'app';
 import * as PIXI from 'pixi.js';
-import { app } from '../lib/app';
 
 export let ball: Ball;
 

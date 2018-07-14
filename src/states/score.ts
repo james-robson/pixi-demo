@@ -1,5 +1,5 @@
-import { detectPlayerOneMovement, detectPlayerTwoMovement } from '../lib/movement/player';
-import { settings } from '../lib/settings';
+import { detectPlayerOneMovement, detectPlayerTwoMovement } from 'movement';
+import { settings } from 'settings';
 
 export function score (delta: number): void {
     // You can still move while the score animation plays
