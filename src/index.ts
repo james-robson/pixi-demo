@@ -1,19 +1,15 @@
 import * as WebFont from 'webfontloader';
+import './assets/images/loading.gif';
 import { app, createApplication } from './lib/app';
+import { IGameSettings, updateSettings } from './lib/settings';
 import './main.css';
 import { createBall } from './sprites/ball';
 import { createCenterLine } from './sprites/centerLine';
 import { menuContainer, renderMenu } from './sprites/menu';
-import { createPaddles, leftPaddle, rightPaddle } from './sprites/paddles';
-import { createScores, scores } from './sprites/scores';
+import { createPaddles } from './sprites/paddles';
+import { createScores } from './sprites/scores';
 import { currentState, setState } from './states/current';
 import { play } from './states/play';
-
-import './assets/images/loading.gif';
-
-import { IGameSettings, settings, updateSettings } from './lib/settings';
-
-const direction: boolean = true;
 
 window.addEventListener('load', () => {
     bootstrap();
