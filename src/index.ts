@@ -8,11 +8,12 @@ import { playerOneKeyboardDown, playerOneKeyboardUp, playerTwoKeyboardDown, play
 import { moveCPUPaddle } from './lib/movement/cpu';
 import { detectPlayerOneMovement, detectPlayerTwoMovement } from './lib/movement/player';
 import './main.css';
-import { Ball, ball, createBall } from './sprites/ball';
-import { CenterLine } from './sprites/centerLine';
+import { ball, createBall } from './sprites/ball';
+import { createCenterLine } from './sprites/centerLine';
 import { menuContainer, renderMenu } from './sprites/menu';
 import { createPaddles, leftPaddle, rightPaddle } from './sprites/paddles';
 import { createScores, scores } from './sprites/scores';
+import { score } from './states/score';
 import { win } from './states/win';
 
 import './assets/images/loading.gif';
@@ -20,12 +21,12 @@ import './assets/images/loading.gif';
 import './assets/sounds/beeep.ogg';
 import './assets/sounds/peeeeeep.ogg';
 import './assets/sounds/plop.ogg';
+import { IGameSettings, settings, updateSettings } from './lib/settings';
 
 const sideHitSound = PIXI.sound.Sound.from('./assets/sounds/plop.ogg');
 const paddleHitSound = PIXI.sound.Sound.from('./assets/sounds/beeep.ogg');
 const scoreSound = PIXI.sound.Sound.from('./assets/sounds/peeeeeep.ogg');
 
-let settings: IGameSettings;
 let state: ((delta: number) => void);
 let direction: boolean = true;
 
@@ -42,12 +43,7 @@ window.addEventListener('load', () => {
 function addGraphicsToApp(): void {
     createPaddles(100, window.innerWidth - 100);
     createBall();
-    const centerLines = new CenterLine();
-    centerLines.sprites.forEach((line: PIXI.Graphics) => {
-        app.stage.addChild(line);
-    });
-
-    app.stage.addChild(ball.sprite);
+    createCenterLine();
     createScores();
 }
 
@@ -62,17 +58,9 @@ function gameLoop(delta: number): void {
     state(delta);
 }
 
-function score (delta: number): void {
-    // You can still move while the score animation plays
-    detectPlayerOneMovement(delta);
-    if (settings.mode === 'twoPlayer') {
-        detectPlayerTwoMovement(delta);
-    }
-}
-
 function startPlaying(selectedSettings: IGameSettings): void {
     state = play;
-    settings = selectedSettings;
+    updateSettings(selectedSettings);
     addGraphicsToApp();
     const element = document.getElementById('loadingContainer');
     element.classList.add('hidden');
@@ -211,8 +199,4 @@ function play (delta: number): void {
         }, 3000);
         return;
     }
-}
-
-interface IGameSettings {
-    mode: 'onePlayer' | 'twoPlayer';
 }

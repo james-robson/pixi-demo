@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+import { app } from '../lib/app';
 
 export class CenterLine {
     public sprites: PIXI.Graphics[];
@@ -19,4 +20,11 @@ export class CenterLine {
             this.lineLength += dashLength * 2;
         }
     }
+}
+
+export function createCenterLine(): void {
+    const centerLine = new CenterLine();
+    centerLine.sprites.forEach((line: PIXI.Graphics) => {
+        app.stage.addChild(line);
+    });
 }

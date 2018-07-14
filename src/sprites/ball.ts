@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+import { app } from '../lib/app';
 
 export let ball: Ball;
 
@@ -58,4 +59,5 @@ export class Ball {
 
 export function createBall(): void {
     ball = new Ball();
+    app.stage.addChild(ball.sprite);
 }
