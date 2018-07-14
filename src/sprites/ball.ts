@@ -1,5 +1,7 @@
 import * as PIXI from 'pixi.js';
 
+export let ball: Ball;
+
 const INITIAL_VELOCITY = 14;
 
 export class Ball {
@@ -52,4 +54,8 @@ export class Ball {
     public getHalfHeight(): number {
         return this.ballHalfHeight;
     }
+}
+
+export function createBall(): void {
+    ball = new Ball();
 }

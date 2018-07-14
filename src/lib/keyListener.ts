@@ -32,3 +32,8 @@ export class KeyListener {
         event.preventDefault();
     }
 }
+
+export const playerTwoKeyboardUp = new KeyListener(87); // W key
+export const playerTwoKeyboardDown = new KeyListener(83); // S key
+export const playerOneKeyboardUp = new KeyListener(38); // Up arrow
+export const playerOneKeyboardDown = new KeyListener(40); // Down arrow

@@ -4,9 +4,11 @@ import 'pixi-sound';
 import * as WebFont from 'webfontloader';
 import { app, createApplication } from './lib/app';
 import * as collisions from './lib/collisionDetection';
-import { KeyListener } from './lib/keyListener';
+import { playerOneKeyboardDown, playerOneKeyboardUp, playerTwoKeyboardDown, playerTwoKeyboardUp } from './lib/keyListener';
+import { moveCPUPaddle } from './lib/movement/cpu';
+import { detectPlayerOneMovement, detectPlayerTwoMovement } from './lib/movement/player';
 import './main.css';
-import { Ball } from './sprites/ball';
+import { Ball, ball, createBall } from './sprites/ball';
 import { CenterLine } from './sprites/centerLine';
 import { menuContainer, renderMenu } from './sprites/menu';
 import { createPaddles, leftPaddle, rightPaddle } from './sprites/paddles';
@@ -25,13 +27,6 @@ const scoreSound = PIXI.sound.Sound.from('./assets/sounds/peeeeeep.ogg');
 
 let settings: IGameSettings;
 let state: ((delta: number) => void);
-let ball = new Ball();
-
-const playerTwoKeyboardUp = new KeyListener(87); // W key
-const playerTwoKeyboardDown = new KeyListener(83); // S key
-const playerOneKeyboardUp = new KeyListener(38); // Up arrow
-const playerOneKeyboardDown = new KeyListener(40); // Down arrow
-
 let direction: boolean = true;
 
 window.addEventListener('load', () => {
@@ -46,7 +41,7 @@ window.addEventListener('load', () => {
 
 function addGraphicsToApp(): void {
     createPaddles(100, window.innerWidth - 100);
-
+    createBall();
     const centerLines = new CenterLine();
     centerLines.sprites.forEach((line: PIXI.Graphics) => {
         app.stage.addChild(line);
@@ -208,57 +203,13 @@ function play (delta: number): void {
         setTimeout(() => {
             clearInterval(flashing);
             app.stage.removeChild(ball.sprite);
-            ball = new Ball();
+            // Start a new ball
+            createBall();
             app.stage.addChild(ball.sprite);
             state = play;
             app.ticker.start();
         }, 3000);
         return;
-    }
-}
-
-function detectPlayerOneMovement(delta: number): void {
-    if (playerOneKeyboardUp.isDown && rightPaddle.sprite.y > 0) {
-        rightPaddle.moveUp(delta);
-    }
-
-    if (playerOneKeyboardDown.isDown && (rightPaddle.sprite.y + rightPaddle.sprite.height) < window.innerHeight) {
-        rightPaddle.moveDown(delta);
-    }
-}
-
-function detectPlayerTwoMovement(delta: number): void {
-    if (playerTwoKeyboardUp.isDown && leftPaddle.sprite.y > 0) {
-        leftPaddle.moveUp(delta);
-    }
-
-    if (playerTwoKeyboardDown.isDown && (leftPaddle.sprite.y + leftPaddle.sprite.height) < window.innerHeight) {
-        leftPaddle.moveDown(delta);
-    }
-}
-
-const minDiff: number = 40;
-const maxDiff: number = 130;
-
-function moveCPUPaddle(delta: number): void {
-    const threshold: number = Math.round((Math.random() * (maxDiff - minDiff) + minDiff) / 10) * 10;
-
-    const paddleCenter = leftPaddle.sprite.y - leftPaddle.getHalfHeight();
-    const ballCenter = ball.sprite.y - ball.getHalfHeight();
-
-    const diff = paddleCenter - ballCenter;
-    const isNegative = diff < 0 ? true : false;
-    const normalisedDiff = Math.abs(diff);
-
-    if ((isNegative && (normalisedDiff > threshold)) &&
-       ((leftPaddle.sprite.y + leftPaddle.sprite.height) < window.innerHeight)) {
-        leftPaddle.moveDown(delta);
-        return;
-    }
-
-    if ((normalisedDiff > threshold) &&
-       leftPaddle.sprite.y > 0) {
-        leftPaddle.moveUp(delta);
     }
 }
 
