@@ -8,7 +8,7 @@ const textSettings = {
     align : 'center'
 };
 
-const menuTitle = new PIXI.Text(`PONG`, textSettings);
+const menuTitle = new PIXI.Text(`PIXI PADDLES`, textSettings);
 const onePlayerText = new PIXI.Text(`1 PLAYER`, textSettings);
 const twoPlayerText = new PIXI.Text(`2 PLAYER`, textSettings);
 
